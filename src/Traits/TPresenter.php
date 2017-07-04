@@ -139,14 +139,15 @@ trait TPresenter
 	 * @param string $signal
 	 * @param array $params
 	 * @param array $post
+	 * @param bool $isRedir
 	 *
 	 * @return \Nette\Application\IResponse
 	 */
-	protected function checkSignal($destination, $signal, $params = [], $post = [])
+	protected function checkSignal($destination, $signal, $params = [], $post = [], $isRedir = TRUE)
 	{
 		return $this->checkRedirect($destination, FALSE, [
 				'do' => $signal,
-			] + $params, $post);
+			] + $params, $post, $isRedir);
 	}
 
 	protected function checkAjaxSignal($destination, $signal, $params = [], $post = [])
@@ -169,18 +170,23 @@ trait TPresenter
 	 * @param string $path
 	 * @param array $params provided to the presenter usually via URL
 	 * @param array $post provided to the presenter via POST
+	 * @param bool $isRedir
 	 *
 	 * @return \Nette\Application\Responses\RedirectResponse
 	 * @throws \Exception
 	 */
-	protected function checkRedirect($destination, $path = '/', $params = [], $post = [])
+	protected function checkRedirect($destination, $path = '/', $params = [], $post = [], $isRedir = TRUE)
 	{
 		/** @var \Nette\Application\Responses\RedirectResponse $response */
 		$response = $this->check($destination, $params, $post);
 		if (!$this->__testbench_exception) {
 			Assert::same(200, $this->getReturnCode());
-			Assert::type('Nette\Application\Responses\RedirectResponse', $response);
-			Assert::same(302, $response->getCode());
+			if ($isRedir == TRUE) {
+				Assert::type('Nette\Application\Responses\RedirectResponse', $response);
+				Assert::same(302, $response->getCode());
+			} else {
+				Assert::type('Nette\Application\Responses\TextResponse', $response);
+			}
 			if ($path) {
 				if (!\Tester\Assert::isMatching("~^https?://test\.bench{$path}(?(?=\?).+)$~", $response->getUrl())) {
 					$path = Dumper::color('yellow') . Dumper::toLine($path) . Dumper::color('white');
