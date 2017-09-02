@@ -35,3 +35,6 @@ after_failure:
 
 notifications:
   email: false
+  
+dist: precise
+sudo: required
