@@ -23,3 +23,8 @@ coverage.xml
 *.expected
 
 .ZZZ_*
+phpW.ini
+mysql.local.neon
+testuj.bat
+tests/tmp/*
+composer.lock
