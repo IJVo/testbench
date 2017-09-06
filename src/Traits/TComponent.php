@@ -9,16 +9,22 @@ trait TComponent
 
 	private $__testbench_presenterMock;
 
+
 	protected function attachToPresenter(IComponent $component, $name = NULL)
 	{
+
 		if ($name === NULL) {
 			if (!$name = $component->getName()) {
 				$name = $component->getReflection()->getShortName();
 				if (preg_match('~class@anonymous.*~', $name)) {
 					$name = md5($name);
 				}
+				if (preg_match('*.*', $name)) {
+					$name = md5($name);
+				}
 			}
 		}
+
 		if (!$this->__testbench_presenterMock) {
 			$container = \Testbench\ContainerFactory::create(FALSE);
 			$this->__testbench_presenterMock = $container->getByType('Testbench\Mocks\PresenterMock');
@@ -28,11 +34,13 @@ trait TComponent
 			try {
 				$presenter->removeComponent($component);
 			} catch (\Nette\InvalidArgumentException $exc) {
+
 			}
 			$presenter->addComponent($component, $name);
 		};
 		$this->__testbench_presenterMock->run(new Mocks\ApplicationRequestMock);
 	}
+
 
 	protected function checkRenderOutput(IComponent $control, $expected, array $renderParameters = [])
 	{
@@ -47,5 +55,6 @@ trait TComponent
 			\Tester\Assert::match($expected, ob_get_clean());
 		}
 	}
+
 
 }
