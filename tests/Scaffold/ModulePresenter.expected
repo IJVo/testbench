@@ -13,12 +13,10 @@ class PresenterPresenterTest extends \Tester\TestCase
 {
 	use \Testbench\TPresenter;
 
-
 	public function testRenderDefault()
 	{
 		$this->checkAction('Module:Presenter:default');
 	}
-
 }
 
 (new PresenterPresenterTest)->run();

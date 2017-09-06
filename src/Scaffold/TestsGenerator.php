@@ -15,7 +15,7 @@ class TestsGenerator
 
 	public function generateTests($outputFolder)
 	{
-		$container = \Testbench\ContainerFactory::create(FALSE);
+		$container = \Testbench\ContainerFactory::create(false);
 		$presenterFactory = $container->getByType('Nette\Application\IPresenterFactory');
 		$presenters = $container->findByType('Nette\Application\UI\Presenter');
 
@@ -39,13 +39,13 @@ class TestsGenerator
 				$methodName = $method->getName();
 				if (preg_match("~^({$renderPrefix})[a-z0-9]+~i", $methodName)) {
 					try {
-						$optionalArgs = $this->tryCall($service, $methodName, $service->getParameters(), TRUE);
+						$optionalArgs = $this->tryCall($service, $methodName, $service->getParameters(), true);
 						if (preg_match('~.*rss.*~i', $methodName)) {
 							$this->renderMethods[$methodName] = 'rss';
 						} elseif (preg_match('~.*sitemap.*~i', $methodName)) {
 							$this->renderMethods[$methodName] = 'sitemap';
 						} else {
-							$requiredArgs = $this->tryCall($service, $methodName, $service->getParameters(), FALSE);
+							$requiredArgs = $this->tryCall($service, $methodName, $service->getParameters(), false);
 							$this->renderMethods[$methodName] = ['action', [$optionalArgs, $requiredArgs]];
 						}
 					} catch (\Nette\Application\AbortException $exc) {
@@ -61,7 +61,7 @@ class TestsGenerator
 					$this->handleMethods[] = $methodName;
 				}
 				if (preg_match('~^createComponent[a-z0-9]+~i', $methodName)) {
-					$method->setAccessible(TRUE);
+					$method->setAccessible(true);
 					$form = $method->invoke($service);
 					if ($form instanceof \Nette\Application\UI\Form) {
 						$this->componentMethods[$methodName] = $form;
@@ -79,7 +79,7 @@ class TestsGenerator
 				$generatedMethod = $testClass->addMethod('test' . ucfirst($testMethod));
 				$destination = $presenterFactory->unformatPresenterClass($rc->getName()) . ':';
 				$destination .= lcfirst(preg_replace('~^(action|render)([a-z]+)~i', '$2', $testMethod));
-				$extra = NULL;
+				$extra = null;
 				if (is_array($testMethodType)) {
 					/** @var \Exception|\Nette\Application\IResponse $extra */
 					$extra = $testMethodType[1];
@@ -132,7 +132,7 @@ class TestsGenerator
 					}
 					$value = "'###', //FIXME: replace with value";
 					if ($control instanceof \Nette\Forms\Controls\Checkbox) {
-						$value = 'FALSE,';
+						$value = 'false,';
 					}
 					$controls .= "\t'" . $control->getName() . "' => $value\n";
 				}
@@ -140,7 +140,7 @@ class TestsGenerator
 					$form->onSuccess($form, $form->getValues());
 					$testClass->addMethod('test' . ucfirst($testMethod))->addBody(
 						"\$this->checkForm(?, ?, [\n" . $controls . '], ?);',
-						[$destination . ':', $action, FALSE]
+						[$destination . ':', $action, false]
 					);
 				} catch (\Nette\Application\AbortException $exc) {
 					$extra = $this->getResponse($service);
@@ -197,15 +197,15 @@ NEON
 	private function getResponse($service)
 	{
 		$property = new \ReflectionProperty(get_parent_class($service), 'response');
-		$property->setAccessible(TRUE);
+		$property->setAccessible(true);
 		return $property->getValue($service);
 	}
 
 	/**
-	 * @return bool FALSE if method doesn't exist or array of args
+	 * @return bool false if method doesn't exist or array of args
 	 * @throws \Nette\Application\BadRequestException
 	 */
-	private function tryCall($class, $method, array $params, $includeOptionals = TRUE)
+	private function tryCall($class, $method, array $params, $includeOptionals = true)
 	{
 		$rc = new \Nette\Application\UI\ComponentReflection($class);
 		if ($rc->hasMethod($method)) {
@@ -218,14 +218,14 @@ NEON
 							$args[$parameter->getName()] = $parameter->getDefaultValue();
 						}
 					} else {
-						$args[$parameter->getName()] = NULL;
+						$args[$parameter->getName()] = null;
 					}
 				}
 				$rm->invokeArgs($class, $rc->combineArgs($rm, $params));
 				return $args;
 			}
 		}
-		return FALSE;
+		return false;
 	}
 
 }
