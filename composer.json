@@ -1,64 +1,69 @@
 {
-  "name": "ijvo/testbench",
-  "description": "Simple integration testing tool for Nette Framework applications",
-  "type": "library",
-  "license": [
-    "BSD-3-Clause",
-    "GPL-2.0",
-    "GPL-3.0"
-  ],
-  "authors": [
-    {
-      "name": "Martin Zlámal",
-      "homepage": "http://zlml.cz/"
-    }
-  ],
-  "require": {
-    "php": ">=5.6.0",
-    "kdyby/fake-session": "^2.0",
-    "nette/application": "^2.4 || ^v3.0",
-    "nette/bootstrap": "^2.4 || ^v3.0",
-    "nette/di": "^2.4 || ^v3.0",
-    "nette/safe-stream": "^2.3",
-    "nette/security": "^2.4 || ^v3.0",
-    "nette/tester": "^2.0",
-    "nette/utils": "^2.4 || ^v3.0"
-  },
-  "require-dev": {
-    "latte/latte": "^2.4",
-    "nette/forms": "^2.4 || ^v3.0",
-    "nette/robot-loader": "^2.4 || ^v3.0",
-    "tracy/tracy": "^2.4",
-    "kdyby/doctrine": "^3.1",
-    "kdyby/doctrine-cache": "^2.5",
-    "kdyby/doctrine-dbal-batchimport": "dev-master",
-    "kdyby/events": "^3.0",
-    "nette/database": "^2.4 || ^v3.0",
-    "zenify/doctrine-migrations": "^2.3"
-  },
-  "autoload": {
-    "psr-4": {
-      "Testbench\\": [
-        "src/",
-        "src/Traits/"
-      ]
-    },
-    "files": [
-      "src/Testbench.php"
-    ]
-  },
-  "autoload-dev": {
-    "classmap": [
-      "tests/"
-    ]
-  },
-  "bin": [
-    "src/run-tests"
-  ],
-  "suggest": {
-    "kdyby/doctrine": "Allows enhanced database tests using Doctrine",
-    "kdyby/doctrine-dbal-batchimport": "Allows SQL scripts import for Doctrine (required with kdyby/doctrine)",
-    "nette/database": "Allows enhanced database tests using Nette\\Database",
-    "zenify/doctrine-migrations": "Migrate database to the fresh state"
-  }
+	"name": "ijvo/testbench",
+	"description": "Simple integration testing tool for Nette Framework applications",
+	"type": "library",
+	"license": [
+		"BSD-3-Clause",
+		"GPL-2.0",
+		"GPL-3.0"
+	],
+	"authors": [
+		{
+			"name": "Martin Zlámal",
+			"homepage": "http://zlml.cz/"
+		}
+	],
+	"require": {
+		"php": ">=5.6.0",
+		"kdyby/fake-session": "^2.0",
+		"nette/application": "^2.4 || ^v3.0",
+		"nette/bootstrap": "^2.4 || ^v3.0",
+		"nette/di": "^2.4 || ^v3.0",
+		"nette/safe-stream": "^2.3",
+		"nette/security": "^2.4 || ^v3.0",
+		"nette/tester": "^2.0",
+		"nette/utils": "^2.4 || ^v3.0"
+	},
+	"require-dev": {
+		"latte/latte": "^2.4",
+		"nette/forms": "^2.4 || ^v3.0",
+		"nette/robot-loader": "^2.4 || ^v3.0",
+		"tracy/tracy": "^2.4",
+		"kdyby/doctrine": "^3.1",
+		"kdyby/doctrine-cache": "^2.5",
+		"kdyby/doctrine-dbal-batchimport": "dev-master",
+		"kdyby/events": "^3.0",
+		"nette/database": "^2.4 || ^v3.0",
+		"zenify/doctrine-migrations": "^2.3"
+	},
+	"autoload": {
+		"psr-4": {
+			"Testbench\\": [
+				"src/",
+				"src/Traits/"
+			]
+		},
+		"files": [
+			"src/Testbench.php"
+		]
+	},
+	"autoload-dev": {
+		"classmap": [
+			"tests/"
+		]
+	},
+	"extra": {
+		"branch-alias": {
+			"dev-master": "0.1-dev"
+		}
+	},
+	"bin": [
+		"src/run-tests"
+	],
+	"suggest": {
+		"kdyby/doctrine": "Allows enhanced database tests using Doctrine",
+		"kdyby/doctrine-dbal-batchimport": "Allows SQL scripts import for Doctrine (required with kdyby/doctrine)",
+		"nette/database": "Allows enhanced database tests using Nette\\Database",
+		"zenify/doctrine-migrations": "Migrate database to the fresh state"
+	}
 }
