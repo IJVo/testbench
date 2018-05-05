@@ -12,6 +12,7 @@ use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
  */
 class DoctrineConnectionMock extends \Kdyby\Doctrine\Connection implements \Testbench\Providers\IDatabaseProvider
 {
+	use \Nette\SmartObject;
 
 	private $__testbench_databaseName;
 

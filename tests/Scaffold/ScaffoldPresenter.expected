@@ -16,12 +16,7 @@ class ScaffoldPresenterTest extends \Tester\TestCase
 	public function testRenderDefault()
 	{
 		//FIXME: parameters may not be correct
-		$this->checkAction('Scaffold:default', [
-			'variable' => null,
-			'optional' => 'optionalValue',
-			'nullable' => null,
-			'const' => 'xyz',
-		]);
+		$this->checkAction('Scaffold:default', ['variable' => null, 'optional' => 'optionalValue', 'nullable' => null, 'const' => 'xyz']);
 
 		$this->checkAction('Scaffold:default', ['variable' => null]);
 	}
