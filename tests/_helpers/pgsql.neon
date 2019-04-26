@@ -15,6 +15,14 @@ doctrine:
 	password: ''
 
 
+dbal:
+	driver: mysqli
+	host: 127.0.0.1
+	database: information_schema
+	username: root
+	password: ''
+
+
 testbench:
 	migrations: no
 	sqls:

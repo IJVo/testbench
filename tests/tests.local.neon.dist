@@ -15,6 +15,14 @@ doctrine:
 	password: root
 
 
+dbal:
+	driver: mysqli
+	host: 127.0.0.1
+	database: information_schema
+	username: root
+	password: root
+
+
 extensions:
 	migrations: Zenify\DoctrineMigrations\DI\MigrationsExtension
 	- Symnedi\EventDispatcher\DI\EventDispatcherExtension #migrations
@@ -29,7 +37,7 @@ testbench:
 	url: http://test.bench/
 	migrations: yes
 	shareDatabase: no
-    dbprefix: _testbench_
+	dbprefix: _testbench_
 	sqls:
 		- %testsDir%/_helpers/sqls/mysql_1.sql
 		- %testsDir%/_helpers/sqls/mysql_2.sql

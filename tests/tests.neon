@@ -21,3 +21,4 @@ extensions:
 	annotations: Kdyby\Annotations\DI\AnnotationsExtension
 	doctrine: Kdyby\Doctrine\DI\OrmExtension
 	fakeSession: Kdyby\FakeSession\DI\FakeSessionExtension
+	dbal: Nextras\Dbal\Bridges\NetteDI\DbalExtension

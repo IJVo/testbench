@@ -17,6 +17,14 @@ doctrine:
 		password: ''
 
 
+dbal:
+	driver: mysqli
+	host: 127.0.0.1
+	database: information_schema
+	username: root
+	password: ''
+
+
 extensions:
 	migrations: Zenify\DoctrineMigrations\DI\MigrationsExtension
 	- Symnedi\EventDispatcher\DI\EventDispatcherExtension #migrations
