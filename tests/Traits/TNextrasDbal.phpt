@@ -47,7 +47,7 @@ class TNextrasDbalTest extends \Tester\TestCase
 			Assert::match('information_schema', $returnActualDatabaseName());
 			Assert::match('_testbench_' . getenv(\Tester\Environment::THREAD), $connection->query('SELECT DATABASE();')->fetchField());
 		} else {
-			Assert::same('_testbench_' . getenv(\Tester\Environment::THREAD), $returnActualDatabaseName());
+			Assert::same('postgres', $returnActualDatabaseName());
 		}
 	}
 
@@ -69,11 +69,11 @@ class TNextrasDbalTest extends \Tester\TestCase
 				['id' => 3, 'column_1' => 'value_1', 'column_2' => 'value_2'],
 						], $result);
 
-//		if ($connection->getDriver() instanceof MysqliDriver) {
-//			Assert::match('information_schema', $returnActualDatabaseName);
-//		} else {
-//			Assert::same('_testbench_' . getenv(\Tester\Environment::THREAD), $returnActualDatabaseName);
-//		}
+		if ($connection->getDriver() instanceof MysqliDriver) {
+			Assert::match('information_schema', $returnActualDatabaseName);
+		} else {
+			Assert::same('postgres', $returnActualDatabaseName);
+		}
 	}
 
 
