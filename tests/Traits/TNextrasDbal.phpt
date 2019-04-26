@@ -70,9 +70,9 @@ class TNextrasDbalTest extends \Tester\TestCase
 						], $result);
 
 		if ($connection->getDriver() instanceof MysqliDriver) {
-			Assert::match('information_schema', $returnActualDatabaseName);
+			Assert::match('information_schema', $returnActualDatabaseName());
 		} else {
-			Assert::same('postgres', $returnActualDatabaseName);
+			Assert::same('postgres', $returnActualDatabaseName());
 		}
 	}
 
