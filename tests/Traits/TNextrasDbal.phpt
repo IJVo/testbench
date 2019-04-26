@@ -72,7 +72,7 @@ class TNextrasDbalTest extends \Tester\TestCase
 		if ($connection->getDriver() instanceof MysqliDriver) {
 			Assert::match('information_schema', $returnActualDatabaseName());
 		} else {
-			Assert::same('postgres', $returnActualDatabaseName());
+			Assert::same('_testbench_' . getenv(\Tester\Environment::THREAD), $returnActualDatabaseName());
 		}
 	}
 
@@ -102,7 +102,6 @@ class TNextrasDbalTest extends \Tester\TestCase
 		} else {
 			Assert::match('postgres', $params['database']);
 		}
-
 	}
 }
 
