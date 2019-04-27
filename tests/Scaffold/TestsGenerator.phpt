@@ -23,6 +23,7 @@ class TestsGenerator extends \Tester\TestCase
 
 	public function testPresentersOutput()
 	{
+		\Tester\Environment::lock('TestsGenerator', __DIR__ . '/../_temp'); // musí zde být lock kvuli setUp, ktery vytvari slozku _temp/scaffold
 		Assert::matchFile(__DIR__ . '/Presenter.expected', file_get_contents($this->output . '/PresenterPresenter.phpt'));
 		Assert::matchFile(
 			__DIR__ . '/ModulePresenter.expected',
@@ -36,11 +37,13 @@ class TestsGenerator extends \Tester\TestCase
 
 	public function testSupportFiles()
 	{
+		\Tester\Environment::lock('TestsGenerator', __DIR__ . '/../_temp'); // musí zde být lock kvuli setUp, ktery vytvari slozku _temp/scaffold
 		Assert::true(is_dir($this->output . '/_temp'));
 	}
 
 	public function testNeon()
 	{
+		\Tester\Environment::lock('TestsGenerator', __DIR__ . '/../_temp'); // musí zde být lock kvuli setUp, ktery vytvari slozku _temp/scaffold
 		Assert::matchFile(__DIR__ . '/Neon.expected', file_get_contents($this->output . '/tests.neon'));
 	}
 

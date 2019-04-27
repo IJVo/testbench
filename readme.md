@@ -1,7 +1,10 @@
 
 [![Build Status](https://travis-ci.org/IJVo/testbench.svg?branch=master)](https://travis-ci.org/IJVo/testbench)
+[![Latest stable](https://img.shields.io/packagist/v/IJVo/testbench.svg)](https://packagist.org/packages/IJVo/testbench)
 
-Tested against PHP 5.6, 7.0 and 7.1. 
+Forked from https://github.com/mrtnzlml-archive/testbench
+
+Tested against PHP 7.0, 7.1, 7.2 and 7.3. 
 
 Please read [this wiki](https://github.com/mrtnzlml/testbench/wiki).
 
