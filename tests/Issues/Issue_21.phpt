@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Issues;
 
 use Tester\Assert;
@@ -16,6 +18,7 @@ class Issue_21 extends \Tester\TestCase
 	use \Testbench\TPresenter;
 	use \Testbench\TCompiledContainer;
 
+
 	public function testGetParametersPersistence()
 	{
 		$this->checkAction('Presenter:default', ['getparam' => 'getparamvalue']);
@@ -29,6 +32,7 @@ class Issue_21 extends \Tester\TestCase
 		Assert::same('getparamvalue', $httpRequest->getQuery('getparam'));
 	}
 
+
 	public function testPostParametersPersistence()
 	{
 		$this->checkSignal('Presenter:default', 'signal', ['id' => 1], ['postparam' => 'postparamvalue']);
@@ -40,17 +44,17 @@ class Issue_21 extends \Tester\TestCase
 		Assert::same('postparamvalue', $appRequest->getPost('postparam'));
 		Assert::same('postparamvalue', $httpRequest->getPost('postparam'));
 
-		Assert::same(1, $appRequest->getParameter('id'));
-		Assert::same(1, $presenter->getParameter('id'));
-		Assert::same(1, $httpRequest->getQuery('id'));
+		Assert::same(1, (int) $appRequest->getParameter('id'));
+		Assert::same(1, (int) $presenter->getParameter('id'));
+		Assert::same(1, (int) $httpRequest->getQuery('id'));
 	}
+
 
 	public function testRedirectPersistentParameter()
 	{
 		$this->checkRedirect('Presenter:redirectRss', '/x/y/rss', ['persistentParameter' => 'Url-En.coded Value MixedCasě?!']);
 		$this->checkRedirect('Presenter:redirect', '/x/y', ['persistentParameter' => 'Url-En.coded Value MixedCasě?!']);
 	}
-
 }
 
 (new Issue_21)->run();

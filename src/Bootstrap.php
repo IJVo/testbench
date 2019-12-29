@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Testbench;
 
 class Bootstrap
@@ -10,9 +12,10 @@ class Bootstrap
 	/** @var callable */
 	public static $onBeforeContainerCreate;
 
-	public static function setup($tempDir, $callback = NULL)
+
+	public static function setup(string $tempDir, callable $callback = NULL)
 	{
-		if (!class_exists('Tester\Assert')) {
+		if (!class_exists(\Tester\Assert::class)) {
 			echo "Install Nette Tester using `composer update --dev`\n";
 			exit(1);
 		}
@@ -25,7 +28,7 @@ class Bootstrap
 		}
 		date_default_timezone_set('Europe/Prague');
 
-		if (class_exists('Tracy\Debugger')) {
+		if (class_exists(\Tracy\Debugger::class)) {
 			\Tracy\Debugger::$logDirectory = self::$tempDir;
 		}
 
@@ -35,5 +38,4 @@ class Bootstrap
 		$_SERVER['REMOTE_ADDR'] = '11.22.33.44';
 		$_SERVER['HTTP_HOST'] = $_SERVER['SERVER_NAME'] = 'test.bench';
 	}
-
 }

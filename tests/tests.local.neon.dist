@@ -24,7 +24,7 @@ dbal:
 
 
 extensions:
-	migrations: Zenify\DoctrineMigrations\DI\MigrationsExtension
+	migrations: Nettrine\Migrations\DI\MigrationsExtension
 	- Symnedi\EventDispatcher\DI\EventDispatcherExtension #migrations
 
 

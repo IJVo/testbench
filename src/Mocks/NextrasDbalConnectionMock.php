@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Testbench\Mocks;
 
 use Nextras\Dbal\Drivers\Mysqli\MysqliDriver;
@@ -11,13 +13,14 @@ use Nextras\Dbal\Drivers\Pgsql\PgsqlDriver;
 class NextrasDbalConnectionMock extends \Nextras\Dbal\Connection implements \Testbench\Providers\IDatabaseProvider
 {
 
-	private $__testbench_databaseName;
+	private $__testbench_database_name;
 
-	public function __construct( array $config)
+
+	public function __construct(array $config)
 	{
 		$container = \Testbench\ContainerFactory::create(FALSE);
 		$this->onConnect[] = function (NextrasDbalConnectionMock $connection) use ($container) {
-			if ($this->__testbench_databaseName !== NULL) { //already initialized (needed for pgsql)
+			if ($this->__testbench_database_name !== NULL) { //already initialized (needed for pgsql)
 				return;
 			}
 			try {
@@ -28,7 +31,7 @@ class NextrasDbalConnectionMock extends \Nextras\Dbal\Connection implements \Tes
 					if ($registry->registerDatabase($dbName)) {
 						$this->__testbench_database_setup($connection, $container, TRUE);
 					} else {
-						$this->__testbench_databaseName = $dbName;
+						$this->__testbench_database_name = $dbName;
 						$this->__testbench_database_change($connection, $container);
 					}
 				} else { // always create new test database
@@ -41,11 +44,12 @@ class NextrasDbalConnectionMock extends \Nextras\Dbal\Connection implements \Tes
 		parent::__construct($config);
 	}
 
+
 	/** @internal */
 	public function __testbench_database_setup($connection, \Nette\DI\Container $container, $persistent = FALSE)
 	{
 		$config = $container->parameters['testbench'];
-		$this->__testbench_databaseName = $config['dbprefix'] . getenv(\Tester\Environment::THREAD);
+		$this->__testbench_database_name = $config['dbprefix'] . getenv(\Tester\Environment::THREAD);
 
 		$this->__testbench_database_drop($connection, $container);
 		$this->__testbench_database_create($connection, $container);
@@ -61,6 +65,7 @@ class NextrasDbalConnectionMock extends \Nextras\Dbal\Connection implements \Tes
 		}
 	}
 
+
 	/**
 	 * @internal
 	 *
@@ -68,9 +73,10 @@ class NextrasDbalConnectionMock extends \Nextras\Dbal\Connection implements \Tes
 	 */
 	public function __testbench_database_create($connection, \Nette\DI\Container $container)
 	{
-		$connection->query("CREATE DATABASE {$this->__testbench_databaseName}");
+		$connection->query("CREATE DATABASE {$this->__testbench_database_name}");
 		$this->__testbench_database_change($connection, $container);
 	}
+
 
 	/**
 	 * @internal
@@ -80,11 +86,12 @@ class NextrasDbalConnectionMock extends \Nextras\Dbal\Connection implements \Tes
 	public function __testbench_database_change($connection, \Nette\DI\Container $container)
 	{
 		if ($connection->getDriver() instanceof MysqliDriver) {
-			$connection->query("USE {$this->__testbench_databaseName}");
+			$connection->query("USE {$this->__testbench_database_name}");
 		} else {
-			$this->__testbench_database_connect($connection, $container, $this->__testbench_databaseName);
+			$this->__testbench_database_connect($connection, $container, $this->__testbench_database_name);
 		}
 	}
+
 
 	/**
 	 * @internal
@@ -96,8 +103,9 @@ class NextrasDbalConnectionMock extends \Nextras\Dbal\Connection implements \Tes
 		if (!$connection->getDriver() instanceof MysqliDriver) {
 			$this->__testbench_database_connect($connection, $container);
 		}
-		$connection->query("DROP DATABASE IF EXISTS {$this->__testbench_databaseName}");
+		$connection->query("DROP DATABASE IF EXISTS {$this->__testbench_database_name}");
 	}
+
 
 	/**
 	 * @internal
@@ -134,5 +142,4 @@ class NextrasDbalConnectionMock extends \Nextras\Dbal\Connection implements \Tes
 		$connection->__construct(['database' => $databaseName] + $connection->getConfig());
 		$connection->connect();
 	}
-
 }

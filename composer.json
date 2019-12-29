@@ -16,31 +16,35 @@
 			"name": "Ing. Jaroslav Vaculik -IJVo",
 			"homepage": "https://ijvo.cz"
 		}
-    ],
+	],
 	"require": {
 		"php": ">=7.0",
-		"kdyby/fake-session": "^2.0",
-		"nette/application": "^2.4",
-		"nette/bootstrap": "^2.4",
-		"nette/di": "^2.4",
+		"kdyby/fake-session": "^3.0",
+		"nette/application": "^3.0",
+		"nette/bootstrap": "^3.0",
+		"nette/di": "^3.0",
+		"nette/http": "^3.0",
 		"nette/safe-stream": "^2.3",
-		"nette/security": "^2.4",
-		"nette/tester": "^2.0",
-		"nette/utils": "^2.4"
+		"nette/security": "^3.0",
+		"nette/tester": "^2.2",
+		"nette/utils": "^3.0"
 	},
 	"require-dev": {
-		"latte/latte": "^2.4",
-		"nette/forms": "^2.4",
-		"nette/robot-loader": "^2.4",
-		"tracy/tracy": "^2.4",
-		"kdyby/doctrine": "^3.1",
-		"kdyby/doctrine-cache": "^2.5",
+		"latte/latte": "^2.5",
+		"nette/forms": "^3.0",
+		"nette/robot-loader": "^3.0",
+		"tracy/tracy": "^2.7",
+		"kdyby/doctrine": "dev-master",
+		"kdyby/doctrine-cache": "^3.0",
 		"kdyby/doctrine-dbal-batchimport": "dev-master",
-		"kdyby/events": "^3.0",
-		"nette/database": "^2.4",
-		"zenify/doctrine-migrations": "^2.3",
+		"kdyby/events": "dev-master",
+		"kdyby/console": "dev-master",
+		"nette/database": "^3.0",
+		"nettrine/migrations": "^0.6",
 		"nextras/dbal": "~3.0"
 	},
+	"minimum-stability": "dev",
+	"prefer-stable": true,
 	"autoload": {
 		"psr-4": {
 			"Testbench\\": [
@@ -64,11 +68,5 @@
 	},
 	"bin": [
 		"src/run-tests"
-	],
-	"suggest": {
-		"kdyby/doctrine": "Allows enhanced database tests using Doctrine",
-		"kdyby/doctrine-dbal-batchimport": "Allows SQL scripts import for Doctrine (required with kdyby/doctrine)",
-		"nette/database": "Allows enhanced database tests using Nette\\Database",
-		"zenify/doctrine-migrations": "Migrate database to the fresh state"
-	}
+	]
 }

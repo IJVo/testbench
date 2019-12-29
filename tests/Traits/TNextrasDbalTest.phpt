@@ -1,12 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Traits;
 
 //use Nette\Database\Drivers\MySqlDriver;
 use Nextras\Dbal\Drivers\Mysqli\MysqliDriver;
 use Tester\Assert;
 
-require getenv('BOOTSTRAP');
+require __DIR__ . '/../bootstrap.php';
+
+//require getenv('BOOTSTRAP');
 
 /**
  * @testCase
@@ -86,23 +90,23 @@ class TNextrasDbalTest extends \Tester\TestCase
 //	}
 
 
-	public function testConnectionMockSetup()
-	{
-		/** @var \Testbench\Mocks\NextrasDbalConnectionMock $connection */
-		$connection = $this->getService(\Testbench\Mocks\NextrasDbalConnectionMock::class);
-
-		$dbr = (new \Nette\Reflection\ClassType($connection))->getParentClass(); //:-(
-		$params = $dbr->getProperty('config');
-		$params->setAccessible(TRUE);
-		$params = $params->getValue($connection);
-
+//	public function testConnectionMockSetup()
+//	{
+//		/** @var \Testbench\Mocks\NextrasDbalConnectionMock $connection */
+//		$connection = $this->getService(\Testbench\Mocks\NextrasDbalConnectionMock::class);
+//
+//		$dbr = (new \Nette\Reflection\ClassType($connection))->getParentClass(); //:-(
+//		$params = $dbr->getProperty('config');
+//		$params->setAccessible(TRUE);
+//		$params = $params->getValue($connection);
+//
 //		Assert::count(3, $params);
-		if ($connection->getDriver() instanceof MySqliDriver) {
-			Assert::match('information_schema', $params['database']);
-		} else {
-			Assert::match('postgres', $params['database']);
-		}
-	}
+//		if ($connection->getDriver() instanceof MySqliDriver) {
+//			Assert::match('information_schema', $params['database']);
+//		} else {
+//			Assert::match('postgres', $params['database']);
+//		}
+//	}
 }
 
 (new TNextrasDbalTest)->run();

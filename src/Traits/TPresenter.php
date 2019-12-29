@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Testbench;
 
 use Tester\Assert;
@@ -10,41 +12,49 @@ trait TPresenter
 
 	/** @var \Nette\Application\IPresenter */
 	private $__testbench_presenter;
-
 	private $__testbench_httpCode;
-
 	private $__testbench_exception;
-
 	private $__testbench_ajaxMode = FALSE;
+
 
 	/**
 	 * @param string $destination fully qualified presenter name (module:module:presenter)
 	 * @param array $params provided to the presenter usually via URL
 	 * @param array $post provided to the presenter via POST
 	 *
-	 * @return \Nette\Application\IResponse
 	 * @throws \Exception
 	 */
-	protected function check($destination, $params = [], $post = [])
+	protected function check(string $destination, array $params = [], array $post = []): \Nette\Application\IResponse
 	{
 		$destination = ltrim($destination, ':');
 		$pos = strrpos($destination, ':');
 		$presenter = substr($destination, 0, $pos);
 		$action = substr($destination, $pos + 1) ?: 'default';
 
-		$container = \Testbench\ContainerFactory::create(FALSE);
+		$container = ContainerFactory::create(FALSE);
 		$container->removeService('httpRequest');
 		$headers = $this->__testbench_ajaxMode ? ['X-Requested-With' => 'XMLHttpRequest'] : [];
 		$url = new \Nette\Http\UrlScript($container->parameters['testbench']['url']);
+	IJVoLog::log('TPresenter.php - Check() - $url', $url);
+	IJVoLog::log('TPresenter.php - Check() - $params', $params);
+
 		$container->addService('httpRequest', new Mocks\HttpRequestMock($url, $params, $post, [], [], $headers));
-		$presenterFactory = $container->getByType('Nette\Application\IPresenterFactory');
+	IJVoLog::log('TPresenter.php - Check() - $container', $container);
+
+		$presenterFactory = $container->getByType(\Nette\Application\IPresenterFactory::class);
 		$this->__testbench_presenter = $presenterFactory->createPresenter($presenter);
 		$this->__testbench_presenter->autoCanonicalize = FALSE;
 		$this->__testbench_presenter->invalidLinkMode = \Nette\Application\UI\Presenter::INVALID_LINK_EXCEPTION;
 
 		$postCopy = $post;
+
+	IJVoLog::log('TPresenter.php - Check() - $post', $post);
+
 		if (isset($params['do'])) {
 			foreach ($post as $key => $field) {
+	IJVoLog::log('TPresenter.php - Check() - $post -key', $key);
+	IJVoLog::log('TPresenter.php - Check() - $post -field', $field);
+
 				if (is_array($field) && array_key_exists(\Nette\Forms\Form::REQUIRED, $field)) {
 					$post[$key] = $field[0];
 				}
@@ -57,26 +67,54 @@ trait TPresenter
 		$session->getSection('Nette\Forms\Controls\CsrfProtection')->token = 'testbench.fakeToken';
 		$post = $post + ['_token_' => 'goVdCQ1jk0UQuVArz15RzkW6vpDU9YqTRILjE=']; //CSRF magic! ¯\_(ツ)_/¯
 
-		$request = new Mocks\ApplicationRequestMock(
-			$presenter,
-			$post ? 'POST' : 'GET',
-			['action' => $action] + $params,
-			$post
+		$request = new \Nette\Application\Request(
+						$presenter,
+						$post ? 'POST' : 'GET',
+						['action' => $action] + $params,
+						$post
 		);
+
+		IJVoLog::log('TPresenter.php - Check() - $destination', $destination);
+		IJVoLog::log('$params', $params);
+		IJVoLog::log('$request', $request);
+
 		try {
 			$this->__testbench_httpCode = 200;
 			$this->__testbench_exception = NULL;
+
+			IJVoLog::log('TPresenter.php - Check() - __testbench_presenter', $this->__testbench_presenter);
+
+			//**************** RUN ************************************
 			$response = $this->__testbench_presenter->run($request);
+
+			IJVoLog::log('TPresenter.php - Check() - $response', $response);
 
 			if (isset($params['do'])) {
 				if (preg_match('~(.+)-submit$~', $params['do'], $matches)) {
+
+			IJVoLog::log('TPresenter.php - Check() - preg_match $matches', $matches);
+
 					/** @var \Nette\Application\UI\Form $form */
 					$form = $this->__testbench_presenter->getComponent($matches[1]);
-					foreach ($form->getControls() as $control) {
+
+	IJVoLog::log('TPresenter.php - Check() - $form', $form);
+
+	foreach ($form->getControls() as $control) {
+
+	IJVoLog::log('TPresenter.php - Check() - $control', $control);
+
 						if (array_key_exists($control->getName(), $postCopy)) {
+
+	IJVoLog::log('TPresenter.php - Check() - $postCopy', $postCopy);
+
 							$subvalues = $postCopy[$control->getName()];
+
+	IJVoLog::log('TPresenter.php - Check() - $subvalues', $subvalues);
+
 							$rq = \Nette\Forms\Form::REQUIRED;
-							if (is_array($subvalues) && array_key_exists($rq, $subvalues) && $subvalues[$rq]) {
+	IJVoLog::log('TPresenter.php - Check() - $rq', $rq);
+
+	if (is_array($subvalues) && array_key_exists($rq, $subvalues) && $subvalues[$rq]) {
 								if ($control->isRequired() !== TRUE) {
 									Assert::fail("field '{$control->name}' should be defined as required, but it's not");
 								}
@@ -84,6 +122,7 @@ trait TPresenter
 						}
 						if ($control->hasErrors()) {
 							$errors = '';
+	IJVoLog::log('TPresenter.php - Check() - $control->hasErrors()', $control->hasErrors());
 							$counter = 1;
 							foreach ($control->getErrors() as $error) {
 								$errors .= "  - $error\n";
@@ -93,28 +132,39 @@ trait TPresenter
 						}
 					}
 					foreach ($form->getErrors() as $error) {
-						Assert::fail($error);
+
+	IJVoLog::log('TPresenter.php - Check() - $error', $error);
+
+			Assert::fail($error);
 					}
 				}
 			}
+
+			IJVoLog::log('TPresenter.php - Check() End - $response', $response);
+
+			$IsOk =true;
+			Assert::true($IsOk);
 
 			return $response;
 		} catch (\Exception $exc) {
 			$this->__testbench_exception = $exc;
 			$this->__testbench_httpCode = $exc->getCode();
+
+			IJVoLog::log('TPresenter.php - Check() Exception - $exc', $exc);
+
 			throw $exc;
 		}
 	}
+
 
 	/**
 	 * @param string $destination fully qualified presenter name (module:module:presenter)
 	 * @param array $params provided to the presenter usually via URL
 	 * @param array $post provided to the presenter via POST
 	 *
-	 * @return \Nette\Application\Responses\TextResponse
 	 * @throws \Exception
 	 */
-	protected function checkAction($destination, $params = [], $post = [])
+	protected function checkAction(string $destination, array $params = [], array $post = []): \Nette\Application\Responses\TextResponse
 	{
 		/** @var \Nette\Application\Responses\TextResponse $response */
 		$response = $this->check($destination, $params, $post);
@@ -123,7 +173,7 @@ trait TPresenter
 			Assert::type('Nette\Application\Responses\TextResponse', $response);
 			Assert::type('Nette\Application\UI\ITemplate', $response->getSource());
 
-			$html = (string)$response->getSource();
+			$html = (string) $response->getSource();
 			//DOMDocument doesn't handle HTML tags inside of script tags very well
 			$html = preg_replace('~<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>~', '', $html); //http://stackoverflow.com/a/6660315/3135248
 			$dom = @\Tester\DomQuery::fromHtml($html);
@@ -134,36 +184,55 @@ trait TPresenter
 		return $response;
 	}
 
+
 	/**
 	 * @param string $destination
 	 * @param string $signal
 	 * @param array $params
 	 * @param array $post
-	 * @param bool $isRedir
-	 *
+	 * @param type $isRedir
 	 * @return \Nette\Application\IResponse
 	 */
-	protected function checkSignal($destination, $signal, $params = [], $post = [], $isRedir = TRUE)
+	protected function checkSignal(string $destination, string $signal, array $params = [], array $post = [], $isRedir = TRUE): \Nette\Application\IResponse
 	{
 		return $this->checkRedirect($destination, FALSE, [
-				'do' => $signal,
-			] + $params, $post, $isRedir);
+								'do' => $signal,
+										] + $params, $post, $isRedir);
 	}
 
-	protected function checkAjaxSignal($destination, $signal, $params = [], $post = [])
+
+	/**
+	 * @param string $destination
+	 * @param string $signal
+	 * @param array $params
+	 * @param array $post
+	 * @return \Nette\Application\Responses\JsonResponse
+	 */
+	protected function checkAjaxSignal(string $destination, string $signal, array $params = [], array $post = []): \Nette\Application\Responses\JsonResponse
 	{
+IJVoLog::log('TPresenter.php - checkAjaxSignal() -1A Start $destination', $destination);
+IJVoLog::log('TPresenter.php - checkAjaxSignal() -1B Start $signal', $signal);
+
 		$this->__testbench_ajaxMode = TRUE;
 		$response = $this->check($destination, [
 				'do' => $signal,
-			] + $params, $post);
+						] + $params, $post);
+IJVoLog::log('TPresenter.php - checkAjaxSignal() -2 $response', $response);
+
 		Assert::true($this->__testbench_presenter->isAjax());
+
+IJVoLog::log('TPresenter.php - checkAjaxSignal() -3 $this->__testbench_exception', $this->__testbench_exception);
+
 		if (!$this->__testbench_exception) {
 			Assert::same(200, $this->getReturnCode());
-			Assert::type('Nette\Application\Responses\JsonResponse', $response);
+			Assert::type(\Nette\Application\Responses\JsonResponse::class, $response);
 		}
 		$this->__testbench_ajaxMode = FALSE;
+IJVoLog::log('TPresenter.php - checkAjaxSignal() -9 End $response', $response);
+
 		return $response;
 	}
+
 
 	/**
 	 * @param string $destination fully qualified presenter name (module:module:presenter)
@@ -175,26 +244,43 @@ trait TPresenter
 	 * @return \Nette\Application\Responses\RedirectResponse
 	 * @throws \Exception
 	 */
-	protected function checkRedirect($destination, $path = '/', $params = [], $post = [], $isRedir = TRUE)
+	protected function checkRedirect(string $destination, $path = '/', array $params = [], array $post = [], $isRedir = TRUE)
 	{
+		IJVoLog::log('TPresenter.php - checkRedirect() - $path', $path);
+
 		/** @var \Nette\Application\Responses\RedirectResponse $response */
 		$response = $this->check($destination, $params, $post);
-		if (!$this->__testbench_exception) {
+
+		IJVoLog::log('TPresenter.php - checkRedirect() - $response', $response);
+
+		IJVoLog::log('TPresenter.php - checkRedirect() - $this->__testbench_exception', $this->__testbench_exception);
+
+		if (!($this->__testbench_exception === null)) {
 			Assert::same(200, $this->getReturnCode());
-			if ($isRedir == TRUE) {
-				Assert::type('Nette\Application\Responses\RedirectResponse', $response);
-				Assert::same(302, $response->getCode());
-			} else {
-				Assert::type('Nette\Application\Responses\TextResponse', $response);
-			}
+			Assert::type('Nette\Application\Responses\RedirectResponse', $response);
+			Assert::same(302, $response->getCode());
+
+//			Assert::same(200, $this->getReturnCode());
+//			if ($isRedir == TRUE) {
+//				Assert::type(\Nette\Application\Responses\RedirectResponse::class, $response);
+//				Assert::same(302, $response->getCode());
+//			} else {
+//				Assert::type(\Nette\Application\Responses\TextResponse::class, $response);
+//			}
+
 			if ($path) {
-				if (!\Tester\Assert::isMatching("~^https?://test\.bench{$path}(?(?=\?).+)$~", $response->getUrl())) {
+				if (!Assert::isMatching("~^https?://test\.bench{$path}(?(?=\?).+)$~", $response->getUrl())) {
 					$path = Dumper::color('yellow') . Dumper::toLine($path) . Dumper::color('white');
 					$url = Dumper::color('yellow') . Dumper::toLine($response->getUrl()) . Dumper::color('white');
 					$originalUrl = new \Nette\Http\Url($response->getUrl());
+
+	IJVoLog::log('TPresenter.php - checkRedirect() -isMatching - $path', $path);
+	IJVoLog::log('TPresenter.php - checkRedirect() -isMatching - $url', $url);
+	IJVoLog::log('TPresenter.php - checkRedirect() -isMatching - $originalUrl', $originalUrl);
+
 					Assert::fail(
-						str_repeat(' ', strlen($originalUrl->getHostUrl()) - 13) // strlen('Failed: path ') = 13
-						. "path $path doesn't match\n$url\nafter redirect"
+									str_repeat(' ', strlen($originalUrl->getHostUrl()) - 13) // strlen('Failed: path ') = 13
+									. "path $path doesn't match\n$url\nafter redirect"
 					);
 				}
 			}
@@ -202,25 +288,26 @@ trait TPresenter
 		return $response;
 	}
 
+
 	/**
 	 * @param string $destination fully qualified presenter name (module:module:presenter)
 	 * @param array $params provided to the presenter usually via URL
 	 * @param array $post provided to the presenter via POST
 	 *
-	 * @return \Nette\Application\Responses\JsonResponse
 	 * @throws \Exception
 	 */
-	protected function checkJson($destination, $params = [], $post = [])
+	protected function checkJson(string $destination, array $params = [], array $post = []): \Nette\Application\Responses\JsonResponse
 	{
 		/** @var \Nette\Application\Responses\JsonResponse $response */
 		$response = $this->check($destination, $params, $post);
 		if (!$this->__testbench_exception) {
 			Assert::same(200, $this->getReturnCode());
-			Assert::type('Nette\Application\Responses\JsonResponse', $response);
+			Assert::type(\Nette\Application\Responses\JsonResponse::class, $response);
 			Assert::same('application/json', $response->getContentType());
 		}
 		return $response;
 	}
+
 
 	/**
 	 * @param string $destination fully qualified presenter name (module:module:presenter)
@@ -228,11 +315,12 @@ trait TPresenter
 	 * @param array $params provided to the presenter usually via URL
 	 * @param array $post provided to the presenter via POST
 	 */
-	public function checkJsonScheme($destination, array $scheme, $params = [], $post = [])
+	public function checkJsonScheme(string $destination, array $scheme, array $params = [], array $post = []): void
 	{
 		$response = $this->checkJson($destination, $params, $post);
 		Assert::same($scheme, $response->getPayload());
 	}
+
 
 	/**
 	 * @param string $destination fully qualified presenter name (module:module:presenter)
@@ -240,29 +328,39 @@ trait TPresenter
 	 * @param array $post provided to the presenter via POST
 	 * @param string|boolean $path Path after redirect or FALSE if it's form without redirect
 	 *
-	 * @return \Nette\Application\Responses\RedirectResponse
 	 * @throws \Tester\AssertException
 	 */
-	protected function checkForm($destination, $formName, $post = [], $path = '/')
+	protected function checkForm(string $destination, string $formName, array $post = [], $path = '/'): \Nette\Application\IResponse
 	{
+			IJVoLog::log('TPresenter.php - checkForm() - $path', $path);
 		if (is_string($path)) {
-			return $this->checkRedirect($destination, $path, [
-				'do' => $formName . '-submit',
-			], $post);
+
+//			return $this->checkRedirect($destination, $path, [
+//									'do' => $formName . '-submit',
+//											], $post);
+
+			$chckRedir = $this->checkRedirect($destination, $path, [
+									'do' => $formName . '-submit',
+											], $post);
+			IJVoLog::log('TPresenter.php - checkForm() - $chckRedir', $chckRedir);
+
+			return $chckRedir;
+
 		} elseif (is_bool($path)) {
 			/** @var \Nette\Application\Responses\RedirectResponse $response */
 			$response = $this->check($destination, [
-				'do' => $formName . '-submit',
-			], $post);
+					'do' => $formName . '-submit',
+							], $post);
 			if (!$this->__testbench_exception) {
 				Assert::same(200, $this->getReturnCode());
-				Assert::type('Nette\Application\Responses\TextResponse', $response);
+				Assert::type(\Nette\Application\Responses\TextResponse::class, $response);
 			}
 			return $response;
 		} else {
-			\Tester\Assert::fail('Path should be string or boolean (probably FALSE).');
+			Assert::fail('Path should be string or boolean (probably FALSE).');
 		}
 	}
+
 
 	/**
 	 * @param string $destination fully qualified presenter name (module:module:presenter)
@@ -270,10 +368,9 @@ trait TPresenter
 	 * @param array $post provided to the presenter via POST
 	 * @param string|bool $path
 	 *
-	 * @return \Nette\Application\IResponse
 	 * @throws \Exception
 	 */
-	protected function checkAjaxForm($destination, $formName, $post = [], $path = FALSE)
+	protected function checkAjaxForm(string $destination, string $formName, array $post = [], $path = FALSE): \Nette\Application\IResponse
 	{
 		if (is_string($path)) {
 			$this->checkForm($destination, $formName, $post, $path);
@@ -282,36 +379,36 @@ trait TPresenter
 		$this->__testbench_presenter = NULL; //FIXME: not very nice, but performance first
 		$this->__testbench_ajaxMode = TRUE;
 		$response = $this->check($destination, [
-			'do' => $formName . '-submit',
-		], $post);
+				'do' => $formName . '-submit',
+						], $post);
 		Assert::true($this->__testbench_presenter->isAjax());
 		if (!$this->__testbench_exception) {
 			Assert::same(200, $this->getReturnCode());
-			Assert::type('Nette\Application\Responses\JsonResponse', $response);
+			Assert::type(\Nette\Application\Responses\JsonResponse::class, $response);
 		}
 		$this->__testbench_presenter = NULL;
 		$this->__testbench_ajaxMode = FALSE;
 		return $response;
 	}
 
+
 	/**
 	 * @param string $destination fully qualified presenter name (module:module:presenter)
 	 * @param array $params provided to the presenter usually via URL
 	 * @param array $post provided to the presenter via POST
 	 *
-	 * @return \Nette\Application\Responses\TextResponse
 	 * @throws \Exception
 	 */
-	protected function checkRss($destination, $params = [], $post = [])
+	protected function checkRss(string $destination, array $params = [], array $post = []): \Nette\Application\Responses\TextResponse
 	{
 		/** @var \Nette\Application\Responses\TextResponse $response */
 		$response = $this->check($destination, $params, $post);
 		if (!$this->__testbench_exception) {
 			Assert::same(200, $this->getReturnCode());
-			Assert::type('Nette\Application\Responses\TextResponse', $response);
-			Assert::type('Nette\Application\UI\ITemplate', $response->getSource());
+			Assert::type(\Nette\Application\Responses\TextResponse::class, $response);
+			Assert::type(\Nette\Application\UI\ITemplate::class, $response->getSource());
 
-			$dom = \Tester\DomQuery::fromXml($response->getSource());
+			$dom = \Tester\DomQuery::fromXml((string) $response->getSource());
 			Assert::true($dom->has('rss'), "missing 'rss' element");
 			Assert::true($dom->has('channel'), "missing 'channel' element");
 			Assert::true($dom->has('title'), "missing 'title' element");
@@ -321,24 +418,24 @@ trait TPresenter
 		return $response;
 	}
 
+
 	/**
 	 * @param string $destination fully qualified presenter name (module:module:presenter)
 	 * @param array $params provided to the presenter usually via URL
 	 * @param array $post provided to the presenter via POST
 	 *
-	 * @return \Nette\Application\Responses\TextResponse
 	 * @throws \Exception
 	 */
-	protected function checkSitemap($destination, $params = [], $post = [])
+	protected function checkSitemap(string $destination, array $params = [], array $post = []): \Nette\Application\Responses\TextResponse
 	{
 		/** @var \Nette\Application\Responses\TextResponse $response */
 		$response = $this->check($destination, $params, $post);
 		if (!$this->__testbench_exception) {
 			Assert::same(200, $this->getReturnCode());
-			Assert::type('Nette\Application\Responses\TextResponse', $response);
-			Assert::type('Nette\Application\UI\ITemplate', $response->getSource());
+			Assert::type(\Nette\Application\Responses\TextResponse::class, $response);
+			Assert::type(\Nette\Application\UI\ITemplate::class, $response->getSource());
 
-			$xml = \Tester\DomQuery::fromXml($response->getSource());
+			$xml = \Tester\DomQuery::fromXml((string) $response->getSource());
 			Assert::same('urlset', $xml->getName(), 'root element is');
 			$url = $xml->children();
 			Assert::same('url', $url->getName(), "child of 'urlset'");
@@ -347,14 +444,13 @@ trait TPresenter
 		return $response;
 	}
 
+
 	/**
 	 * @param \Nette\Security\IIdentity|integer $id
 	 * @param array|null $roles
 	 * @param array|null $data
-	 *
-	 * @return \Nette\Security\User
 	 */
-	protected function logIn($id = 1, $roles = NULL, $data = NULL)
+	protected function logIn($id = 1, $roles = NULL, $data = NULL): \Nette\Security\User
 	{
 		if ($id instanceof \Nette\Security\IIdentity) {
 			$identity = $id;
@@ -362,31 +458,28 @@ trait TPresenter
 			$identity = new \Nette\Security\Identity($id, $roles, $data);
 		}
 		/** @var \Nette\Security\User $user */
-		$user = \Testbench\ContainerFactory::create(FALSE)->getByType('Nette\Security\User');
+		$user = ContainerFactory::create(FALSE)->getByType(\Nette\Security\User::class);
 		$user->login($identity);
 		return $user;
 	}
 
-	/**
-	 * @return \Nette\Security\User
-	 */
-	protected function logOut()
+
+	protected function logOut(): \Nette\Security\User
 	{
 		/** @var \Nette\Security\User $user */
-		$user = \Testbench\ContainerFactory::create(FALSE)->getByType('Nette\Security\User');
+		$user = ContainerFactory::create(FALSE)->getByType(\Nette\Security\User::class);
 		$user->logout();
 		return $user;
 	}
 
-	/**
-	 * @return bool
-	 */
-	protected function isUserLoggedIn()
+
+	protected function isUserLoggedIn(): bool
 	{
 		/** @var \Nette\Security\User $user */
-		$user = \Testbench\ContainerFactory::create(FALSE)->getByType('Nette\Security\User');
+		$user = ContainerFactory::create(FALSE)->getByType(\Nette\Security\User::class);
 		return $user->isLoggedIn();
 	}
+
 
 	/**
 	 * @return \Nette\Application\UI\Presenter
@@ -396,20 +489,15 @@ trait TPresenter
 		return $this->__testbench_presenter;
 	}
 
-	/**
-	 * @return integer
-	 */
-	protected function getReturnCode()
+
+	protected function getReturnCode(): int
 	{
 		return $this->__testbench_httpCode;
 	}
 
-	/**
-	 * @return \Exception
-	 */
-	protected function getException()
+
+	protected function getException(): \Exception
 	{
 		return $this->__testbench_exception;
 	}
-
 }

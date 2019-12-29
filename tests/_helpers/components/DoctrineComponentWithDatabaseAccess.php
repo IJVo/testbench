@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Tester\Assert;
 
 class DoctrineComponentWithDatabaseAccess extends \Nette\Application\UI\Control
@@ -7,7 +9,7 @@ class DoctrineComponentWithDatabaseAccess extends \Nette\Application\UI\Control
 
 	public function __construct(\Kdyby\Doctrine\EntityManager $entityManager)
 	{
-		parent::__construct();
+//		parent::__construct();
 
 		$connection = $entityManager->getConnection();
 		Assert::type('Testbench\Mocks\ConnectionMock', $connection); //not a service (listeners will not work)!

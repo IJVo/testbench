@@ -1,8 +1,8 @@
 database:
 	default:
-		dsn: 'mysql:host=127.0.0.1;dbname=information_schema'
+		dsn: 'mysql:host=mysql;dbname=information_schema'
 		user: root
-		password: ''
+		password: mysql
 		options: [PDO::MYSQL_ATTR_COMPRESS = true]
 
 
@@ -10,19 +10,19 @@ doctrine:
 	metadata:
 		App: %appDir%
 	default:
-		host: 127.0.0.1
+		host: mysql
 		dbname: information_schema
 		driver: pdo_mysql
 		user: root
-		password: ''
+		password: mysql
 
 
 dbal:
 	driver: mysqli
-	host: 127.0.0.1
+	host: mysql
 	database: information_schema
 	username: root
-	password: ''
+	password: mysql
 
 
 extensions:

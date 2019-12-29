@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Issues;
 
 use Tester\FileMock;
@@ -27,11 +29,11 @@ final class Issue_20 extends \Tester\TestCase
 
 	use \Testbench\TPresenter;
 
+
 	public function testRenderDefault()
 	{
 		$this->checkAction('Presenter:default');
 	}
-
 }
 
 (new Issue_20)->run();

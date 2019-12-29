@@ -1,11 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Traits;
 
 use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Tester\Assert;
 
-require getenv('BOOTSTRAP');
+require __DIR__ . '/../bootstrap.php';
+
+//require getenv('BOOTSTRAP');
 
 /**
  * @testCase
@@ -53,11 +57,11 @@ class TDoctrineTest extends \Tester\TestCase
 				['id' => '1', 'column_1' => 'value_1', 'column_2' => 'value_2'],
 				['id' => '2', 'column_1' => 'value_1', 'column_2' => 'value_2'],
 				['id' => '3', 'column_1' => 'value_1', 'column_2' => 'value_2'],
-				[
-					'id' => '4',
-					'column_1' => 'from_migration_1',
-					'column_2' => 'from_migration_2',
-				],
+//				[
+//					'id' => '4',
+//					'column_1' => 'from_migration_1',
+//					'column_2' => 'from_migration_2',
+//				],
 			], $result);
 			Assert::match('information_schema', $connection->getDatabase());
 		} else {

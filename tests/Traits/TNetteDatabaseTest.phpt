@@ -1,11 +1,14 @@
 <?php
+declare(strict_types = 1);
 
 namespace Tests\Traits;
 
 use Nette\Database\Drivers\MySqlDriver;
 use Tester\Assert;
 
-require getenv('BOOTSTRAP');
+require __DIR__ . '/../bootstrap.php';
+
+//require getenv('BOOTSTRAP');
 
 /**
  * @testCase
@@ -19,7 +22,7 @@ class TNetteDatabaseTest extends \Tester\TestCase
 	public function testLazyConnection()
 	{
 		$container = $this->getContainer();
-		$db = $container->getByType('Nette\Database\Connection');
+		$db = $container->getByType(\Nette\Database\Connection::class);
 		$db->onConnect[] = function () {
 			Assert::fail('\Nette\Database\Connection::$onConnect event should not be called if you do NOT need database');
 		};
@@ -28,7 +31,7 @@ class TNetteDatabaseTest extends \Tester\TestCase
 
 	public function testContext()
 	{
-		Assert::type('Nette\Database\Context', $this->getContext());
+		Assert::type(\Nette\Database\Context::class, $this->getContext());
 	}
 
 	public function testDatabaseCreation()
@@ -97,7 +100,8 @@ class TNetteDatabaseTest extends \Tester\TestCase
 		}
 
 		Assert::same([
-			'PDO::MYSQL_ATTR_COMPRESS' => TRUE,
+//			'PDO::MYSQL_ATTR_COMPRESS' => TRUE,
+			'1003' => TRUE,
 			'lazy' => TRUE,
 		], $options);
 	}

@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Testbench;
 
 trait TNextrasDbal
 {
+
 
 	protected function getConnection()
 	{
@@ -13,13 +16,12 @@ trait TNextrasDbal
 		if (!$connection instanceof Mocks\NextrasDbalConnectionMock) {
 			$serviceNames = $container->findByType('Nextras\Dbal\Connection');
 			throw new \LogicException(sprintf(
-				'The service %s should be instance of Testbench\Mocks\NextrasDbalConnectionMock, to allow lazy schema initialization.',
-				reset($serviceNames)
+											'The service %s should be instance of Testbench\Mocks\NextrasDbalConnectionMock, to allow lazy schema initialization.',
+											reset($serviceNames)
 			));
 		}
 		/** @var \Nextras\Dbal\Connection $connection */
 		$connection = $container->getByType('Nextras\Dbal\Connection');
 		return $connection;
 	}
-
 }

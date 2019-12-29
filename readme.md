@@ -2,9 +2,14 @@
 [![Build Status](https://travis-ci.org/IJVo/testbench.svg?branch=master)](https://travis-ci.org/IJVo/testbench)
 [![Latest stable](https://img.shields.io/packagist/v/IJVo/testbench.svg)](https://packagist.org/packages/IJVo/testbench)
 
+Testbench
+---------
+
 Forked from https://github.com/mrtnzlml-archive/testbench
 
-Tested against PHP 7.0, 7.1, 7.2 and 7.3. 
+Update for Nette 3.0
+
+Tested against PHP 7.2, 7.3 and 7.4. 
 
 Please read [this wiki](https://github.com/mrtnzlml/testbench/wiki).
 
@@ -24,7 +29,7 @@ You can find few examples in this readme or take a look to the `tests` folder in
 Installation
 ------------
 ```
-$ composer require mrtnzlml/testbench
+$ composer require ijvo/testbench
 ```
 
 Testbench itself doesn't need database. But if you want to use `Testbench\TDoctrine` or `Testbench\TNetteDatabase` trait you have to setup database for the first connection. You should use standard database configuration - nothing special. You can see example in `tests/tests.local.neon.dist` file. Empty database is good enough for Testbench. Supported databases are:

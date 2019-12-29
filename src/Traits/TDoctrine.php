@@ -1,26 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Testbench;
 
 trait TDoctrine
 {
 
-	/**
-	 * @return \Kdyby\Doctrine\EntityManager
-	 */
-	protected function getEntityManager()
+
+	protected function getEntityManager(): \Kdyby\Doctrine\EntityManager
 	{
-		$container = \Testbench\ContainerFactory::create(FALSE);
+		$container = ContainerFactory::create(FALSE);
 		/** @var Mocks\DoctrineConnectionMock $connection */
-		$connection = $container->getByType('Doctrine\DBAL\Connection');
+		$connection = $container->getByType(\Doctrine\DBAL\Connection::class);
 		if (!$connection instanceof Mocks\DoctrineConnectionMock) {
-			$serviceNames = $container->findByType('Doctrine\DBAL\Connection');
+			$serviceNames = $container->findByType(\Doctrine\DBAL\Connection::class);
 			throw new \LogicException(sprintf(
-				'The service %s should be instance of Testbench\Mocks\DoctrineConnectionMock, to allow lazy schema initialization.',
-				reset($serviceNames)
+											'The service %s should be instance of ' . \Testbench\Mocks\DoctrineConnectionMock::class . ', to allow lazy schema initialization.',
+											reset($serviceNames)
 			));
 		}
-		return $container->getByType('Kdyby\Doctrine\EntityManager');
+		return $container->getByType(\Kdyby\Doctrine\EntityManager::class);
 	}
-
 }

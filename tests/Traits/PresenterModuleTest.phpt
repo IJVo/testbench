@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Traits;
 
-require getenv('BOOTSTRAP');
+require __DIR__ . '/../bootstrap.php';
+
+//require getenv('BOOTSTRAP');
 
 /**
  * @testCase
@@ -12,20 +16,24 @@ class PresenterModuleTest extends \Tester\TestCase
 
 	use \Testbench\TPresenter;
 
+
 	public function testClassicRender1()
 	{
 		$this->checkAction('Module:Presenter:');
 	}
+
 
 	public function testClassicRender2()
 	{
 		$this->checkAction('Module:Presenter:default');
 	}
 
+
 	public function testClassicRender3()
 	{
 		$this->checkAction(':Module:Presenter:default');
 	}
+
 
 	public function testMultipleSame()
 	{
@@ -33,7 +41,6 @@ class PresenterModuleTest extends \Tester\TestCase
 		$this->checkAction('Module:Presenter:default');
 		$this->checkAction(':Module:Presenter:default');
 	}
-
 }
 
 (new PresenterModuleTest())->run();

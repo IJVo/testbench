@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 require __DIR__ . '/Runner.php';
 $runner = new \Testbench\Runner;
 $vendorDir = $runner->findVendorDirectory();

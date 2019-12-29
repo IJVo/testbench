@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Testbench;
 
 /**
@@ -7,19 +9,19 @@ namespace Testbench;
  */
 class ContainerFactory
 {
+
 	use \Nette\SmartObject;
 
 	private static $container;
+
 
 	private function __construct()
 	{
 		//Cannot be initialized
 	}
 
-	/**
-	 * @return \Nette\DI\Container
-	 */
-	final public static function create($new = FALSE, $config = [])
+
+	final public static function create(bool $new = FALSE, array $config = []): \Nette\DI\Container
 	{
 		if ($new || self::$container === NULL) {
 			$configurator = new \Nette\Configurator();
@@ -27,18 +29,18 @@ class ContainerFactory
 
 			$configurator->onCompile[] = function (\Nette\Configurator $configurator, \Nette\DI\Compiler $compiler) use ($config) {
 				$compiler->addConfig($config);
-				$compiler->addExtension('testbench', new \Testbench\TestbenchExtension);
+				$compiler->addExtension('testbench', new TestbenchExtension);
 				self::registerAdditionalExtension($compiler, 'fakeSession', new \Kdyby\FakeSession\DI\FakeSessionExtension);
-				if (class_exists('Kdyby\Console\DI\ConsoleExtension')) {
+				if (class_exists(\Kdyby\Console\DI\ConsoleExtension::class)) {
 					self::registerAdditionalExtension($compiler, 'console', new \Kdyby\Console\DI\ConsoleExtension);
 				}
 			};
 
-			$configurator->setTempDirectory(\Testbench\Bootstrap::$tempDir); // shared container for performance purposes
+			$configurator->setTempDirectory(Bootstrap::$tempDir); // shared container for performance purposes
 			$configurator->setDebugMode(FALSE);
 
-			if (is_callable(\Testbench\Bootstrap::$onBeforeContainerCreate)) {
-				call_user_func_array(\Testbench\Bootstrap::$onBeforeContainerCreate, [$configurator]);
+			if (is_callable(Bootstrap::$onBeforeContainerCreate)) {
+				call_user_func_array(Bootstrap::$onBeforeContainerCreate, [$configurator]);
 			}
 
 			self::$container = $configurator->createContainer();
@@ -46,10 +48,11 @@ class ContainerFactory
 		return self::$container;
 	}
 
+
 	/**
 	 * Register extension if not registered by user.
 	 */
-	private static function registerAdditionalExtension(\Nette\DI\Compiler $compiler, $name, $newExtension)
+	private static function registerAdditionalExtension(\Nette\DI\Compiler $compiler, string $name, $newExtension): void
 	{
 		$extensions = [];
 		$config = $compiler->getConfig();
@@ -65,14 +68,15 @@ class ContainerFactory
 		}
 	}
 
+
 	final public function __clone()
 	{
 		throw new \Exception('Clone is not allowed');
 	}
 
-	final public function __wakeup()
+
+	final public function __wakeup(): void
 	{
 		throw new \Exception('Unserialization is not allowed');
 	}
-
 }

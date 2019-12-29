@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Testbench;
 
 class TestbenchExtension extends \Nette\DI\CompilerExtension
@@ -15,18 +17,17 @@ class TestbenchExtension extends \Nette\DI\CompilerExtension
 	];
 
 
-	public function loadConfiguration()
+	public function loadConfiguration(): void
 	{
 		$builder = $this->compiler->getContainerBuilder();
 		$builder->parameters[$this->name] = $this->validateConfig($this->defaults);
 
 		$this->prepareDoctrine();
 		$this->prepareNetteDatabase($builder);
-		//TODO: $builder->addDefinition($this->prefix('applicationRequestMock'))->setClass('Testbench\ApplicationRequestMock');
 	}
 
 
-	public function beforeCompile()
+	public function beforeCompile(): void
 	{
 		$builder = $this->compiler->getContainerBuilder();
 
@@ -38,7 +39,7 @@ class TestbenchExtension extends \Nette\DI\CompilerExtension
 			$builder->removeDefinition($this->prefix('presenterMock'));
 			$builder->addDefinition($this->prefix('presenterMock'))->setClass($mockReplacement);
 		} else {
-			$builder->addDefinition($this->prefix('presenterMock'))->setClass('Testbench\Mocks\PresenterMock');
+			$builder->addDefinition($this->prefix('presenterMock'))->setClass(\Testbench\Mocks\PresenterMock::class);
 		}
 	}
 
@@ -46,11 +47,11 @@ class TestbenchExtension extends \Nette\DI\CompilerExtension
 	/**
 	 * 'wrapperClass' is not a service!
 	 */
-	private function prepareDoctrine()
+	private function prepareDoctrine(): void
 	{
 		$doctrineConnectionSectionKeys = ['dbname' => NULL, 'driver' => NULL, 'connection' => NULL];
 		/** @var \Nette\DI\CompilerExtension $extension */
-		foreach ($this->compiler->getExtensions('Kdyby\Doctrine\DI\OrmExtension') as $extension) {
+		foreach ($this->compiler->getExtensions(\Kdyby\Doctrine\DI\OrmExtension::class) as $extension) {
 			if (array_intersect_key($extension->config, $doctrineConnectionSectionKeys)) {
 				$extension->config['wrapperClass'] = 'Testbench\Mocks\DoctrineConnectionMock';
 			} else {
@@ -64,30 +65,30 @@ class TestbenchExtension extends \Nette\DI\CompilerExtension
 	}
 
 
-	private function prepareNetteDatabase(\Nette\DI\ContainerBuilder $builder)
+	private function prepareNetteDatabase(\Nette\DI\ContainerBuilder $builder): void
 	{
 		$ndbConnectionSectionKeys = ['dsn' => NULL, 'user' => NULL, 'password' => NULL];
 		/** @var \Nette\DI\CompilerExtension $extension */
-		foreach ($this->compiler->getExtensions('Nette\Bridges\DatabaseDI\DatabaseExtension') as $extension) {
+		foreach ($this->compiler->getExtensions(\Nette\Bridges\DatabaseDI\DatabaseExtension::class) as $extension) {
 			if (array_intersect_key($extension->config, $ndbConnectionSectionKeys)) {
 				$extensionConfig = $extension->config;
 				$definitionName = $extension->name . '.default.connection';
 				$builder->getDefinition($definitionName)
-								->setClass('Testbench\Mocks\NetteDatabaseConnectionMock', [
-										$extensionConfig['dsn'],
-										$extensionConfig['user'],
-										$extensionConfig['password'],
-										isset($extensionConfig['options']) ? ($extensionConfig['options'] + ['lazy' => TRUE]) : [],
+								->setFactory(\Testbench\Mocks\NetteDatabaseConnectionMock::class, [
+										$extensionConfig->dsn,
+										$extensionConfig->user,
+										$extensionConfig->password,
+										isset($extensionConfig->options) ? ($extensionConfig->options + ['lazy' => TRUE]) : [],
 				]);
 			} else {
 				foreach ($extension->config as $sectionName => $sectionConfig) {
 					$definitionName = $extension->name . '.' . $sectionName . '.connection';
 					$builder->getDefinition($definitionName)
-									->setClass('Testbench\Mocks\NetteDatabaseConnectionMock', [
-											$sectionConfig['dsn'],
-											$sectionConfig['user'],
-											$sectionConfig['password'],
-											isset($sectionConfig['options']) ? ($sectionConfig['options'] + ['lazy' => TRUE]) : [],
+									->setFactory(\Testbench\Mocks\NetteDatabaseConnectionMock::class, [
+											$sectionConfig->dsn,
+											$sectionConfig->user,
+											$sectionConfig->password,
+											isset($sectionConfig->options) ? ($sectionConfig->options + ['lazy' => TRUE]) : [],
 					]);
 				}
 			}
@@ -95,16 +96,16 @@ class TestbenchExtension extends \Nette\DI\CompilerExtension
 	}
 
 
-	private function prepareNextrasDbal(\Nette\DI\ContainerBuilder $builder)
+	private function prepareNextrasDbal(\Nette\DI\ContainerBuilder $builder): void
 	{
 		$ndbConnectionSectionKeys = ['driver' => NULL, 'host' => NULL, 'database' => NULL, 'username' => NULL, 'password' => NULL];
 		/** @var \Nette\DI\CompilerExtension $extension */
-		foreach ($this->compiler->getExtensions('Nextras\Dbal\Bridges\NetteDI\DbalExtension') as $extension) {
+		foreach ($this->compiler->getExtensions(\Nextras\Dbal\Bridges\NetteDI\DbalExtension::class) as $extension) {
 			if (array_intersect_key($extension->config, $ndbConnectionSectionKeys)) {
 				$extensionConfig = $extension->config;
 				$definitionName = $extension->name . '.connection';
 				$builder->getDefinition($definitionName)
-								->setClass('Testbench\Mocks\NextrasDbalConnectionMock', [$extensionConfig]);
+								->setFactory(\Testbench\Mocks\NextrasDbalConnectionMock::class, [$extensionConfig]);
 			}
 		}
 	}

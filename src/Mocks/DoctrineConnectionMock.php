@@ -1,22 +1,33 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Testbench\Mocks;
 
 use Doctrine\Common;
 use Doctrine\DBAL;
 use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
+use Nette\UnexpectedValueException;
 
-/**
- * @method onConnect(DoctrineConnectionMock $self)
- */
 class DoctrineConnectionMock extends \Kdyby\Doctrine\Connection implements \Testbench\Providers\IDatabaseProvider
 {
-	use \Nette\SmartObject;
 
-	private $__testbench_databaseName;
-
+	private $__testbench_database_name;
 	public $onConnect = [];
+
+
+	public function onConnect(self $self)
+	{
+		if (is_array($this->onConnect) || $this->onConnect instanceof \Traversable) {
+			foreach ($this->onConnect as $handler) {
+				$handler($self);
+			}
+		} elseif ($this->onConnect !== null) {
+			throw new UnexpectedValueException("Property " . static::class . "::\$onConnect must be array or null, " . gettype($this->onConnect) . ' given.');
+		}
+	}
+
 
 	public function connect()
 	{
@@ -25,15 +36,17 @@ class DoctrineConnectionMock extends \Kdyby\Doctrine\Connection implements \Test
 		}
 	}
 
+
 	public function __construct(
-		array $params,
-		DBAL\Driver $driver,
-		DBAL\Configuration $config = NULL,
-		Common\EventManager $eventManager = NULL
-	) {
+					array $params,
+					DBAL\Driver $driver,
+					DBAL\Configuration $config = NULL,
+					Common\EventManager $eventManager = NULL
+	)
+	{
 		$container = \Testbench\ContainerFactory::create(FALSE);
 		$this->onConnect[] = function (DoctrineConnectionMock $connection) use ($container) {
-			if ($this->__testbench_databaseName !== NULL) { //already initialized (needed for pgsql)
+			if ($this->__testbench_database_name !== NULL) { //already initialized (needed for pgsql)
 				return;
 			}
 			try {
@@ -44,11 +57,16 @@ class DoctrineConnectionMock extends \Kdyby\Doctrine\Connection implements \Test
 					if ($registry->registerDatabase($dbName)) {
 						$this->__testbench_database_setup($connection, $container, TRUE);
 					} else {
-						$this->__testbench_databaseName = $dbName;
+						$this->__testbench_database_name = $dbName;
 						$this->__testbench_database_change($connection, $container);
 					}
 				} else { // always create new test database
 					$this->__testbench_database_setup($connection, $container);
+				}
+			} catch (\Doctrine\Migrations\MigrationException $e) {
+				//  do not throw an exception if there are no migrations
+				if ($e->getCode() !== 4) {
+					\Tester\Assert::fail($e->getMessage());
 				}
 			} catch (\Exception $e) {
 				\Tester\Assert::fail($e->getMessage());
@@ -57,11 +75,12 @@ class DoctrineConnectionMock extends \Kdyby\Doctrine\Connection implements \Test
 		parent::__construct($params, $driver, $config, $eventManager);
 	}
 
+
 	/** @internal */
 	public function __testbench_database_setup($connection, \Nette\DI\Container $container, $persistent = FALSE)
 	{
 		$config = $container->parameters['testbench'];
-		$this->__testbench_databaseName = $config['dbprefix'] . getenv(\Tester\Environment::THREAD);
+		$this->__testbench_database_name = $config['dbprefix'] . getenv(\Tester\Environment::THREAD);
 
 		$this->__testbench_database_drop($connection, $container);
 		$this->__testbench_database_create($connection, $container);
@@ -71,12 +90,12 @@ class DoctrineConnectionMock extends \Kdyby\Doctrine\Connection implements \Test
 		}
 
 		if ($config['migrations'] === TRUE) {
-			if (class_exists(\Zenify\DoctrineMigrations\Configuration\Configuration::class)) {
-				/** @var \Zenify\DoctrineMigrations\Configuration\Configuration $migrationsConfig */
-				$migrationsConfig = $container->getByType(\Zenify\DoctrineMigrations\Configuration\Configuration::class);
-				$migrationsConfig->__construct($container, $connection);
+			if (class_exists(\Nettrine\Migrations\ContainerAwareConfiguration::class)) {
+				/** @var \Nettrine\Migrations\ContainerAwareConfiguration $migrationsConfig */
+				$migrationsConfig = $container->getByType(\Nettrine\Migrations\ContainerAwareConfiguration::class);
+				$migrationsConfig->__construct($connection);
 				$migrationsConfig->registerMigrationsFromDirectory($migrationsConfig->getMigrationsDirectory());
-				$migration = new \Doctrine\DBAL\Migrations\Migration($migrationsConfig);
+				$migration = new \Doctrine\Migrations\Migrator($migrationsConfig);
 				$migration->migrate($migrationsConfig->getLatestVersion());
 			}
 		}
@@ -88,6 +107,7 @@ class DoctrineConnectionMock extends \Kdyby\Doctrine\Connection implements \Test
 		}
 	}
 
+
 	/**
 	 * @internal
 	 *
@@ -95,9 +115,10 @@ class DoctrineConnectionMock extends \Kdyby\Doctrine\Connection implements \Test
 	 */
 	public function __testbench_database_create($connection, \Nette\DI\Container $container)
 	{
-		$connection->exec("CREATE DATABASE {$this->__testbench_databaseName}");
+		$connection->exec("CREATE DATABASE {$this->__testbench_database_name}");
 		$this->__testbench_database_change($connection, $container);
 	}
+
 
 	/**
 	 * @internal
@@ -107,11 +128,12 @@ class DoctrineConnectionMock extends \Kdyby\Doctrine\Connection implements \Test
 	public function __testbench_database_change($connection, \Nette\DI\Container $container)
 	{
 		if ($connection->getDatabasePlatform() instanceof MySqlPlatform) {
-			$connection->exec("USE {$this->__testbench_databaseName}");
+			$connection->exec("USE {$this->__testbench_database_name}");
 		} else {
-			$this->__testbench_database_connect($connection, $container, $this->__testbench_databaseName);
+			$this->__testbench_database_connect($connection, $container, $this->__testbench_database_name);
 		}
 	}
+
 
 	/**
 	 * @internal
@@ -123,8 +145,9 @@ class DoctrineConnectionMock extends \Kdyby\Doctrine\Connection implements \Test
 		if (!$connection->getDatabasePlatform() instanceof MySqlPlatform) {
 			$this->__testbench_database_connect($connection, $container);
 		}
-		$connection->exec("DROP DATABASE IF EXISTS {$this->__testbench_databaseName}");
+		$connection->exec("DROP DATABASE IF EXISTS {$this->__testbench_database_name}");
 	}
+
 
 	/**
 	 * @internal
@@ -147,12 +170,11 @@ class DoctrineConnectionMock extends \Kdyby\Doctrine\Connection implements \Test
 
 		$connection->close();
 		$connection->__construct(
-			['dbname' => $databaseName] + $connection->getParams(),
-			$connection->getDriver(),
-			$connection->getConfiguration(),
-			$connection->getEventManager()
+						['dbname' => $databaseName] + $connection->getParams(),
+						$connection->getDriver(),
+						$connection->getConfiguration(),
+						$connection->getEventManager()
 		);
 		$connection->connect();
 	}
-
 }

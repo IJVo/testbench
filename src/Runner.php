@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Testbench;
 
 class Runner
 {
 
-	public function prepareArguments(array $args, $testsDir)
+
+	public function prepareArguments(array $args, string $testsDir): array
 	{
 		$args = new \Nette\Iterators\CachingIterator($args);
 		$parameters = [];
@@ -39,29 +42,6 @@ class Runner
 					$pathToTests = $arg;
 				}
 			}
-		}
-
-		//Scaffold
-		if (array_key_exists('--scaffold', $parameters)) {
-			if (!isset($parameters['--scaffold'])) {
-				die("Error: specify tests bootstrap for scaffold like this: '--scaffold <bootstrap.php>'\n");
-			}
-			$scaffoldBootstrap = $parameters['--scaffold'];
-			$scaffoldDir = dirname($scaffoldBootstrap);
-			rtrim($scaffoldDir, DIRECTORY_SEPARATOR);
-			$outputFolderContent = glob("$scaffoldDir/*");
-			if (($key = array_search($scaffoldBootstrap, $outputFolderContent)) !== FALSE) {
-				unset($outputFolderContent[$key]);
-			}
-			if (count($outputFolderContent) !== 0) {
-				die("Error: please use different empty folder - I don't want to destroy your work\n");
-			}
-			require $scaffoldBootstrap;
-			\Nette\Utils\FileSystem::createDir($scaffoldDir . '/_temp');
-			$scaffold = new \Testbench\Scaffold\TestsGenerator;
-			$scaffold->generateTests($scaffoldDir);
-			\Tester\Environment::$checkAssertions = FALSE;
-			die("Tests generated to the folder '$scaffoldDir'\n");
 		}
 
 		//Specify PHP interpreter to run
@@ -99,9 +79,9 @@ class Runner
 		$rii = new \RecursiveIteratorIterator($rdi, \RecursiveIteratorIterator::CHILD_FIRST);
 		foreach ($rii as $entry) {
 			if ($entry->isDir()) {
-				rmdir($entry);
+				rmdir((string) $entry);
 			} else {
-				unlink($entry);
+				unlink((string) $entry);
 			}
 		}
 
@@ -136,7 +116,8 @@ class Runner
 		return $args;
 	}
 
-	public function findVendorDirectory()
+
+	public function findVendorDirectory(): string
 	{
 		$recursionLimit = 10;
 		$findVendor = function ($dirName = 'vendor/bin', $dir = __DIR__) use (&$findVendor, &$recursionLimit) {
@@ -151,5 +132,4 @@ class Runner
 		};
 		return $findVendor();
 	}
-
 }
