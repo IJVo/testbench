@@ -10,7 +10,7 @@ trait TNetteDatabase
 
 	protected function getContext()
 	{
-		$container = \Testbench\ContainerFactory::create(FALSE);
+		$container = \Testbench\ContainerFactory::create(false);
 		/** @var Mocks\NetteDatabaseConnectionMock $connection */
 		$connection = $container->getByType('Nette\Database\Connection');
 		if (!$connection instanceof Mocks\NetteDatabaseConnectionMock) {

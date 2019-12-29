@@ -8,10 +8,10 @@ class TestbenchExtension extends \Nette\DI\CompilerExtension
 {
 
 	private $defaults = [
-			'dbname' => NULL, // custom initial test database name (should not be needed)
+			'dbname' => null, // custom initial test database name (should not be needed)
 			'dbprefix' => '_testbench_', // database prefix for created tests databases
-			'migrations' => FALSE, // set TRUE if you want to use Doctrine migrations
-			'shareDatabase' => FALSE, // should Testbench always create new databases (FALSE) or use shared databases (TRUE)
+			'migrations' => false, // set TRUE if you want to use Doctrine migrations
+			'shareDatabase' => false, // should Testbench always create new databases (FALSE) or use shared databases (TRUE)
 			'sqls' => [], // sqls you want to import during new test database creation
 			'url' => 'http://test.bench/', // fake URL for HTTP request mock
 	];
@@ -49,7 +49,7 @@ class TestbenchExtension extends \Nette\DI\CompilerExtension
 	 */
 	private function prepareDoctrine(): void
 	{
-		$doctrineConnectionSectionKeys = ['dbname' => NULL, 'driver' => NULL, 'connection' => NULL];
+		$doctrineConnectionSectionKeys = ['dbname' => null, 'driver' => null, 'connection' => null];
 		/** @var \Nette\DI\CompilerExtension $extension */
 		foreach ($this->compiler->getExtensions(\Kdyby\Doctrine\DI\OrmExtension::class) as $extension) {
 			if (array_intersect_key($extension->config, $doctrineConnectionSectionKeys)) {
@@ -67,7 +67,7 @@ class TestbenchExtension extends \Nette\DI\CompilerExtension
 
 	private function prepareNetteDatabase(\Nette\DI\ContainerBuilder $builder): void
 	{
-		$ndbConnectionSectionKeys = ['dsn' => NULL, 'user' => NULL, 'password' => NULL];
+		$ndbConnectionSectionKeys = ['dsn' => null, 'user' => null, 'password' => null];
 		/** @var \Nette\DI\CompilerExtension $extension */
 		foreach ($this->compiler->getExtensions(\Nette\Bridges\DatabaseDI\DatabaseExtension::class) as $extension) {
 			if (array_intersect_key($extension->config, $ndbConnectionSectionKeys)) {
@@ -78,7 +78,7 @@ class TestbenchExtension extends \Nette\DI\CompilerExtension
 										$extensionConfig->dsn,
 										$extensionConfig->user,
 										$extensionConfig->password,
-										isset($extensionConfig->options) ? ($extensionConfig->options + ['lazy' => TRUE]) : [],
+										isset($extensionConfig->options) ? ($extensionConfig->options + ['lazy' => true]) : [],
 				]);
 			} else {
 				foreach ($extension->config as $sectionName => $sectionConfig) {
@@ -88,7 +88,7 @@ class TestbenchExtension extends \Nette\DI\CompilerExtension
 											$sectionConfig->dsn,
 											$sectionConfig->user,
 											$sectionConfig->password,
-											isset($sectionConfig->options) ? ($sectionConfig->options + ['lazy' => TRUE]) : [],
+											isset($sectionConfig->options) ? ($sectionConfig->options + ['lazy' => true]) : [],
 					]);
 				}
 			}
@@ -98,7 +98,7 @@ class TestbenchExtension extends \Nette\DI\CompilerExtension
 
 	private function prepareNextrasDbal(\Nette\DI\ContainerBuilder $builder): void
 	{
-		$ndbConnectionSectionKeys = ['driver' => NULL, 'host' => NULL, 'database' => NULL, 'username' => NULL, 'password' => NULL];
+		$ndbConnectionSectionKeys = ['driver' => null, 'host' => null, 'database' => null, 'username' => null, 'password' => null];
 		/** @var \Nette\DI\CompilerExtension $extension */
 		foreach ($this->compiler->getExtensions(\Nextras\Dbal\Bridges\NetteDI\DbalExtension::class) as $extension) {
 			if (array_intersect_key($extension->config, $ndbConnectionSectionKeys)) {

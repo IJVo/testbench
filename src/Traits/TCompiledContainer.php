@@ -10,7 +10,7 @@ trait TCompiledContainer
 
 	protected function getContainer(): \Nette\DI\Container
 	{
-		return ContainerFactory::create(FALSE);
+		return ContainerFactory::create(false);
 	}
 
 
@@ -22,7 +22,7 @@ trait TCompiledContainer
 
 	protected function refreshContainer($config = []): \Nette\DI\Container
 	{
-		return ContainerFactory::create(TRUE, $config);
+		return ContainerFactory::create(true, $config);
 	}
 
 
@@ -37,13 +37,13 @@ trait TCompiledContainer
 	}
 
 
-	protected function markTestAsSlow(bool $really = TRUE): void
+	protected function markTestAsSlow(bool $really = true): void
 	{
 		$this->changeRunLevel($really ? \Testbench::FINE : \Testbench::QUICK);
 	}
 
 
-	protected function markTestAsVerySlow(bool $really = TRUE): void
+	protected function markTestAsVerySlow(bool $really = true): void
 	{
 		$this->changeRunLevel($really ? \Testbench::SLOW : \Testbench::QUICK);
 	}

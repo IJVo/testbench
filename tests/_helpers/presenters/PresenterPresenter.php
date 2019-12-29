@@ -9,6 +9,7 @@ class PresenterPresenter extends Nette\Application\UI\Presenter
 	/** @persistent */
 	public $persistentParameter;
 
+
 	public function actionJson(): void
 	{
 		$this->sendResponse(new \Nette\Application\Responses\JsonResponse([
@@ -39,7 +40,7 @@ class PresenterPresenter extends Nette\Application\UI\Presenter
 		$this->redirect('default');
 	}
 
-	public function renderRedirectRss($flashMessage = TRUE): void
+	public function renderRedirectRss($flashMessage = true): void
 	{
 		if ($flashMessage) {
 			$this->flashMessage('Because of _fid parameter to the URL...');

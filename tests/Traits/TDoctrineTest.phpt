@@ -7,9 +7,7 @@ namespace Tests\Traits;
 use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Tester\Assert;
 
-require __DIR__ . '/../bootstrap.php';
-
-//require getenv('BOOTSTRAP');
+require getenv('BOOTSTRAP');
 
 /**
  * @testCase
@@ -20,6 +18,7 @@ class TDoctrineTest extends \Tester\TestCase
 	use \Testbench\TCompiledContainer;
 	use \Testbench\TDoctrine;
 
+
 	public function testLazyConnection()
 	{
 		$container = $this->getContainer();
@@ -27,13 +26,15 @@ class TDoctrineTest extends \Tester\TestCase
 		$db->onConnect[] = function () {
 			Assert::fail('\Testbench\ConnectionMock::$onConnect event should not be called if you do NOT need database');
 		};
-		\Tester\Environment::$checkAssertions = FALSE;
+		\Tester\Environment::$checkAssertions = false;
 	}
+
 
 	public function testEntityManager()
 	{
 		Assert::type('\Doctrine\ORM\EntityManagerInterface', $this->getEntityManager());
 	}
+
 
 	public function testDatabaseCreation()
 	{
@@ -47,6 +48,7 @@ class TDoctrineTest extends \Tester\TestCase
 		}
 	}
 
+
 	public function testDatabaseSqls()
 	{
 		/** @var \Testbench\Mocks\DoctrineConnectionMock $connection */
@@ -54,25 +56,26 @@ class TDoctrineTest extends \Tester\TestCase
 		$result = $connection->query('SELECT * FROM table_1')->fetchAll();
 		if ($connection->getDatabasePlatform() instanceof MySqlPlatform) {
 			Assert::same([
-				['id' => '1', 'column_1' => 'value_1', 'column_2' => 'value_2'],
-				['id' => '2', 'column_1' => 'value_1', 'column_2' => 'value_2'],
-				['id' => '3', 'column_1' => 'value_1', 'column_2' => 'value_2'],
+					['id' => '1', 'column_1' => 'value_1', 'column_2' => 'value_2'],
+					['id' => '2', 'column_1' => 'value_1', 'column_2' => 'value_2'],
+					['id' => '3', 'column_1' => 'value_1', 'column_2' => 'value_2'],
 //				[
 //					'id' => '4',
 //					'column_1' => 'from_migration_1',
 //					'column_2' => 'from_migration_2',
 //				],
-			], $result);
+							], $result);
 			Assert::match('information_schema', $connection->getDatabase());
 		} else {
 			Assert::same([
-				['id' => 1, 'column_1' => 'value_1', 'column_2' => 'value_2'],
-				['id' => 2, 'column_1' => 'value_1', 'column_2' => 'value_2'],
-				['id' => 3, 'column_1' => 'value_1', 'column_2' => 'value_2'],
-			], $result);
+					['id' => 1, 'column_1' => 'value_1', 'column_2' => 'value_2'],
+					['id' => 2, 'column_1' => 'value_1', 'column_2' => 'value_2'],
+					['id' => 3, 'column_1' => 'value_1', 'column_2' => 'value_2'],
+							], $result);
 			Assert::same('_testbench_' . getenv(\Tester\Environment::THREAD), $connection->getDatabase());
 		}
 	}
+
 
 	public function testDatabaseConnectionReplacementInApp()
 	{
@@ -81,7 +84,6 @@ class TDoctrineTest extends \Tester\TestCase
 		new \DoctrineComponentWithDatabaseAccess($em); //tests inside
 		//app is not using onConnect from Testbench but it has to connect to the mock database
 	}
-
 }
 
 (new TDoctrineTest)->run();

@@ -10,7 +10,7 @@ trait TDoctrine
 
 	protected function getEntityManager(): \Kdyby\Doctrine\EntityManager
 	{
-		$container = ContainerFactory::create(FALSE);
+		$container = ContainerFactory::create(false);
 		/** @var Mocks\DoctrineConnectionMock $connection */
 		$connection = $container->getByType(\Doctrine\DBAL\Connection::class);
 		if (!$connection instanceof Mocks\DoctrineConnectionMock) {

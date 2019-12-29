@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Traits;
 
-require __DIR__ . '/../bootstrap.php';
-
-//require getenv('BOOTSTRAP');
+require getenv('BOOTSTRAP');
 
 /**
  * @testCase
@@ -23,7 +21,7 @@ class MultipleTraits extends \Tester\TestCase
 
 	public function testShutUp()
 	{
-		\Tester\Environment::$checkAssertions = FALSE;
+		\Tester\Environment::$checkAssertions = false;
 	}
 }
 

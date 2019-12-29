@@ -32,9 +32,9 @@ class DatabasesRegistry
 			fwrite($handle, $databaseName . "\n");
 			fclose($handle);
 
-			return TRUE;
+			return true;
 		} else { //database already exists in log file
-			return FALSE;
+			return false;
 		}
 	}
 }

@@ -21,9 +21,9 @@ class ContainerFactory
 	}
 
 
-	final public static function create(bool $new = FALSE, array $config = []): \Nette\DI\Container
+	final public static function create(bool $new = false, array $config = []): \Nette\DI\Container
 	{
-		if ($new || self::$container === NULL) {
+		if ($new || self::$container === null) {
 			$configurator = new \Nette\Configurator();
 			$configurator->addParameters($config);
 
@@ -37,7 +37,7 @@ class ContainerFactory
 			};
 
 			$configurator->setTempDirectory(Bootstrap::$tempDir); // shared container for performance purposes
-			$configurator->setDebugMode(FALSE);
+			$configurator->setDebugMode(false);
 
 			if (is_callable(Bootstrap::$onBeforeContainerCreate)) {
 				call_user_func_array(Bootstrap::$onBeforeContainerCreate, [$configurator]);
@@ -56,14 +56,14 @@ class ContainerFactory
 	{
 		$extensions = [];
 		$config = $compiler->getConfig();
-		foreach (isset($config['extensions']) ? $config['extensions'] : [] as $extension) {
+		foreach ($config['extensions'] ?? [] as $extension) {
 			if (is_string($extension)) {
 				$extensions[] = $extension;
 			} elseif ($extension instanceof \Nette\DI\Statement) {
 				$extensions[] = $extension->getEntity();
 			}
 		}
-		if (!in_array(get_class($newExtension), $extensions)) {
+		if (!in_array(get_class($newExtension), $extensions, true)) {
 			$compiler->addExtension($name, $newExtension);
 		}
 	}

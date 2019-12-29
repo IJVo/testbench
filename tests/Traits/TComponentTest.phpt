@@ -6,9 +6,7 @@ namespace Tests\Traits;
 
 use Tester\Assert;
 
-require __DIR__ . '/../bootstrap.php';
-
-//require getenv('BOOTSTRAP');
+require getenv('BOOTSTRAP');
 
 /**
  * @testCase
@@ -77,7 +75,7 @@ class TComponentTest extends \Tester\TestCase
 		Assert::type(\Testbench\CustomPresenterMock::class, $control->lookup(\Nette\Application\IPresenter::class));
 		$this->attachToPresenter($control);
 		Assert::type(\Testbench\CustomPresenterMock::class, $control->lookup(\Nette\Application\IPresenter::class));
-		\Tester\Environment::$checkAssertions = FALSE;
+		\Tester\Environment::$checkAssertions = false;
 	}
 
 
@@ -87,7 +85,7 @@ class TComponentTest extends \Tester\TestCase
 		Assert::type(\Testbench\CustomPresenterMock::class, $control->lookup(\Nette\Application\IPresenter::class));
 		$this->attachToPresenter($control = new \Component, 'name_2');
 		Assert::type(\Testbench\CustomPresenterMock::class, $control->lookup(\Nette\Application\IPresenter::class));
-		\Tester\Environment::$checkAssertions = FALSE;
+		\Tester\Environment::$checkAssertions = false;
 	}
 }
 

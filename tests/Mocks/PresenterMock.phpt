@@ -28,7 +28,7 @@ Assert::exception(function () use ($mock) {
 	$mock->afterRender();
 }, \Nette\Application\AbortException::class);
 
-$mock->loadState(['__terminate' => TRUE]);
+$mock->loadState(['__terminate' => true]);
 Assert::exception(function () use ($mock) {
 	$mock->startup();
 }, \Nette\Application\AbortException::class);

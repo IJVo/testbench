@@ -14,7 +14,7 @@ trait TPresenter
 	private $__testbench_presenter;
 	private $__testbench_httpCode;
 	private $__testbench_exception;
-	private $__testbench_ajaxMode = FALSE;
+	private $__testbench_ajaxMode = false;
 
 
 	/**
@@ -26,12 +26,14 @@ trait TPresenter
 	 */
 	protected function check(string $destination, array $params = [], array $post = []): \Nette\Application\IResponse
 	{
+IJVoLog::log('TPresenter.php - check() -1 $this->__testbench_exception', $this->__testbench_exception);
+
 		$destination = ltrim($destination, ':');
 		$pos = strrpos($destination, ':');
 		$presenter = substr($destination, 0, $pos);
 		$action = substr($destination, $pos + 1) ?: 'default';
 
-		$container = ContainerFactory::create(FALSE);
+		$container = ContainerFactory::create(false);
 		$container->removeService('httpRequest');
 		$headers = $this->__testbench_ajaxMode ? ['X-Requested-With' => 'XMLHttpRequest'] : [];
 		$url = new \Nette\Http\UrlScript($container->parameters['testbench']['url']);
@@ -43,7 +45,7 @@ trait TPresenter
 
 		$presenterFactory = $container->getByType(\Nette\Application\IPresenterFactory::class);
 		$this->__testbench_presenter = $presenterFactory->createPresenter($presenter);
-		$this->__testbench_presenter->autoCanonicalize = FALSE;
+		$this->__testbench_presenter->autoCanonicalize = false;
 		$this->__testbench_presenter->invalidLinkMode = \Nette\Application\UI\Presenter::INVALID_LINK_EXCEPTION;
 
 		$postCopy = $post;
@@ -80,7 +82,7 @@ trait TPresenter
 
 		try {
 			$this->__testbench_httpCode = 200;
-			$this->__testbench_exception = NULL;
+			$this->__testbench_exception = null;
 
 			IJVoLog::log('TPresenter.php - Check() - __testbench_presenter', $this->__testbench_presenter);
 
@@ -99,7 +101,7 @@ trait TPresenter
 
 	IJVoLog::log('TPresenter.php - Check() - $form', $form);
 
-	foreach ($form->getControls() as $control) {
+					foreach ($form->getControls() as $control) {
 
 	IJVoLog::log('TPresenter.php - Check() - $control', $control);
 
@@ -114,8 +116,8 @@ trait TPresenter
 							$rq = \Nette\Forms\Form::REQUIRED;
 	IJVoLog::log('TPresenter.php - Check() - $rq', $rq);
 
-	if (is_array($subvalues) && array_key_exists($rq, $subvalues) && $subvalues[$rq]) {
-								if ($control->isRequired() !== TRUE) {
+							if (is_array($subvalues) && array_key_exists($rq, $subvalues) && $subvalues[$rq]) {
+								if ($control->isRequired() !== true) {
 									Assert::fail("field '{$control->name}' should be defined as required, but it's not");
 								}
 							}
@@ -142,7 +144,7 @@ trait TPresenter
 
 			IJVoLog::log('TPresenter.php - Check() End - $response', $response);
 
-			$IsOk =true;
+			$IsOk = true;  // hack for Nette tester
 			Assert::true($IsOk);
 
 			return $response;
@@ -193,9 +195,9 @@ trait TPresenter
 	 * @param type $isRedir
 	 * @return \Nette\Application\IResponse
 	 */
-	protected function checkSignal(string $destination, string $signal, array $params = [], array $post = [], $isRedir = TRUE): \Nette\Application\IResponse
+	protected function checkSignal(string $destination, string $signal, array $params = [], array $post = [], $isRedir = true): \Nette\Application\IResponse
 	{
-		return $this->checkRedirect($destination, FALSE, [
+		return $this->checkRedirect($destination, false, [
 								'do' => $signal,
 										] + $params, $post, $isRedir);
 	}
@@ -213,7 +215,7 @@ trait TPresenter
 IJVoLog::log('TPresenter.php - checkAjaxSignal() -1A Start $destination', $destination);
 IJVoLog::log('TPresenter.php - checkAjaxSignal() -1B Start $signal', $signal);
 
-		$this->__testbench_ajaxMode = TRUE;
+		$this->__testbench_ajaxMode = true;
 		$response = $this->check($destination, [
 				'do' => $signal,
 						] + $params, $post);
@@ -227,7 +229,7 @@ IJVoLog::log('TPresenter.php - checkAjaxSignal() -3 $this->__testbench_exception
 			Assert::same(200, $this->getReturnCode());
 			Assert::type(\Nette\Application\Responses\JsonResponse::class, $response);
 		}
-		$this->__testbench_ajaxMode = FALSE;
+		$this->__testbench_ajaxMode = false;
 IJVoLog::log('TPresenter.php - checkAjaxSignal() -9 End $response', $response);
 
 		return $response;
@@ -244,7 +246,7 @@ IJVoLog::log('TPresenter.php - checkAjaxSignal() -9 End $response', $response);
 	 * @return \Nette\Application\Responses\RedirectResponse
 	 * @throws \Exception
 	 */
-	protected function checkRedirect(string $destination, $path = '/', array $params = [], array $post = [], $isRedir = TRUE)
+	protected function checkRedirect(string $destination, $path = '/', array $params = [], array $post = [], $isRedir = true)
 	{
 		IJVoLog::log('TPresenter.php - checkRedirect() - $path', $path);
 
@@ -255,7 +257,7 @@ IJVoLog::log('TPresenter.php - checkAjaxSignal() -9 End $response', $response);
 
 		IJVoLog::log('TPresenter.php - checkRedirect() - $this->__testbench_exception', $this->__testbench_exception);
 
-		if (!($this->__testbench_exception === null)) {
+		if (!($this->__testbench_exception)) {
 			Assert::same(200, $this->getReturnCode());
 			Assert::type('Nette\Application\Responses\RedirectResponse', $response);
 			Assert::same(302, $response->getCode());
@@ -326,7 +328,7 @@ IJVoLog::log('TPresenter.php - checkAjaxSignal() -9 End $response', $response);
 	 * @param string $destination fully qualified presenter name (module:module:presenter)
 	 * @param string $formName
 	 * @param array $post provided to the presenter via POST
-	 * @param string|boolean $path Path after redirect or FALSE if it's form without redirect
+	 * @param string|bool $path Path after redirect or FALSE if it's form without redirect
 	 *
 	 * @throws \Tester\AssertException
 	 */
@@ -370,14 +372,14 @@ IJVoLog::log('TPresenter.php - checkAjaxSignal() -9 End $response', $response);
 	 *
 	 * @throws \Exception
 	 */
-	protected function checkAjaxForm(string $destination, string $formName, array $post = [], $path = FALSE): \Nette\Application\IResponse
+	protected function checkAjaxForm(string $destination, string $formName, array $post = [], $path = false): \Nette\Application\IResponse
 	{
 		if (is_string($path)) {
 			$this->checkForm($destination, $formName, $post, $path);
 			Assert::false($this->__testbench_presenter->isAjax());
 		}
-		$this->__testbench_presenter = NULL; //FIXME: not very nice, but performance first
-		$this->__testbench_ajaxMode = TRUE;
+		$this->__testbench_presenter = null; //FIXME: not very nice, but performance first
+		$this->__testbench_ajaxMode = true;
 		$response = $this->check($destination, [
 				'do' => $formName . '-submit',
 						], $post);
@@ -386,8 +388,8 @@ IJVoLog::log('TPresenter.php - checkAjaxSignal() -9 End $response', $response);
 			Assert::same(200, $this->getReturnCode());
 			Assert::type(\Nette\Application\Responses\JsonResponse::class, $response);
 		}
-		$this->__testbench_presenter = NULL;
-		$this->__testbench_ajaxMode = FALSE;
+		$this->__testbench_presenter = null;
+		$this->__testbench_ajaxMode = false;
 		return $response;
 	}
 
@@ -446,11 +448,11 @@ IJVoLog::log('TPresenter.php - checkAjaxSignal() -9 End $response', $response);
 
 
 	/**
-	 * @param \Nette\Security\IIdentity|integer $id
+	 * @param \Nette\Security\IIdentity|int $id
 	 * @param array|null $roles
 	 * @param array|null $data
 	 */
-	protected function logIn($id = 1, $roles = NULL, $data = NULL): \Nette\Security\User
+	protected function logIn($id = 1, $roles = null, $data = null): \Nette\Security\User
 	{
 		if ($id instanceof \Nette\Security\IIdentity) {
 			$identity = $id;
@@ -458,7 +460,7 @@ IJVoLog::log('TPresenter.php - checkAjaxSignal() -9 End $response', $response);
 			$identity = new \Nette\Security\Identity($id, $roles, $data);
 		}
 		/** @var \Nette\Security\User $user */
-		$user = ContainerFactory::create(FALSE)->getByType(\Nette\Security\User::class);
+		$user = ContainerFactory::create(false)->getByType(\Nette\Security\User::class);
 		$user->login($identity);
 		return $user;
 	}
@@ -467,7 +469,7 @@ IJVoLog::log('TPresenter.php - checkAjaxSignal() -9 End $response', $response);
 	protected function logOut(): \Nette\Security\User
 	{
 		/** @var \Nette\Security\User $user */
-		$user = ContainerFactory::create(FALSE)->getByType(\Nette\Security\User::class);
+		$user = ContainerFactory::create(false)->getByType(\Nette\Security\User::class);
 		$user->logout();
 		return $user;
 	}
@@ -476,7 +478,7 @@ IJVoLog::log('TPresenter.php - checkAjaxSignal() -9 End $response', $response);
 	protected function isUserLoggedIn(): bool
 	{
 		/** @var \Nette\Security\User $user */
-		$user = ContainerFactory::create(FALSE)->getByType(\Nette\Security\User::class);
+		$user = ContainerFactory::create(false)->getByType(\Nette\Security\User::class);
 		return $user->isLoggedIn();
 	}
 

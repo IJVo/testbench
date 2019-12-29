@@ -12,9 +12,9 @@ trait TComponent
 	private $__testbench_presenterMock;
 
 
-	protected function attachToPresenter(IComponent $component, string $name = NULL): void
+	protected function attachToPresenter(IComponent $component, string $name = null): void
 	{
-		if ($name === NULL) {
+		if ($name === null) {
 			if (!$name = $component->getName()) {
 				$name = $component->getReflection()->getShortName();
 				if (preg_match('~class@anonymous.*~', $name)) {
@@ -26,7 +26,7 @@ trait TComponent
 			}
 		}
 		if (!$this->__testbench_presenterMock) {
-			$container = ContainerFactory::create(FALSE);
+			$container = ContainerFactory::create(false);
 			$this->__testbench_presenterMock = $container->getByType(\Testbench\Mocks\PresenterMock::class);
 			$container->callInjects($this->__testbench_presenterMock);
 		}

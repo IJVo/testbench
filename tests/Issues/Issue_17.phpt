@@ -21,7 +21,7 @@ class Issue_17 extends \Tester\TestCase
 	/**
 	 * @dataProvider commentFormParameters
 	 */
-	public function testCommentForm($params, $post, $shouldFail = TRUE)
+	public function testCommentForm($params, $post, $shouldFail = true)
 	{
 		if ($shouldFail) {
 			Assert::exception(function () use ($params, $post) {
@@ -42,7 +42,7 @@ class Issue_17 extends \Tester\TestCase
 	/**
 	 * @dataProvider commentFormParametersBetter
 	 */
-	public function testCommentFormBetter($post, $shouldFail = TRUE, $path = FALSE)
+	public function testCommentFormBetter($post, $shouldFail = true, $path = false)
 	{
 		if ($shouldFail) {
 			Assert::exception(function () use ($post, $shouldFail, $path) {
@@ -61,8 +61,8 @@ class Issue_17 extends \Tester\TestCase
 	public function commentFormParameters()
 	{
 		return [
-				[['do' => 'form1-submit'], ['test' => 'NOT NULL'], FALSE],
-				[['do' => 'form1-submit'], ['test' => NULL], TRUE],
+				[['do' => 'form1-submit'], ['test' => 'NOT NULL'], false],
+				[['do' => 'form1-submit'], ['test' => null], true],
 		];
 	}
 
@@ -70,8 +70,8 @@ class Issue_17 extends \Tester\TestCase
 	public function commentFormParametersBetter()
 	{
 		return [
-				[['test' => 'NOT NULL'], FALSE, '/x/y'],
-				[['test' => NULL], TRUE, FALSE],
+				[['test' => 'NOT NULL'], false, '/x/y'],
+				[['test' => null], true, false],
 		];
 	}
 }

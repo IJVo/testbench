@@ -17,7 +17,6 @@ require __DIR__ . '/../bootstrap.php';
 class TPresenterTest extends \Testbench\CustomPresenterTestCase
 {
 
-	/*
 
 	public function testClassicRender()
 	{
@@ -94,7 +93,7 @@ class TPresenterTest extends \Testbench\CustomPresenterTestCase
 		$url = Dumper::color('yellow') . Dumper::toLine('http://test.bench/x/y/rss') . Dumper::color('white');
 		Assert::error(function () {
 			$this->checkRedirect('Presenter:redirectRss', '/x/y/rs', [
-					'flashMessage' => FALSE,
+					'flashMessage' => false,
 			]);
 		}, \Tester\AssertException::class, str_repeat(' ', 4) . "path $path doesn't match\n$url\nafter redirect");
 	}
@@ -204,7 +203,7 @@ class TPresenterTest extends \Testbench\CustomPresenterTestCase
 					'test' => 'test',
 					'error' => 'FORM ERROR',
 			]);
-		}, \Tester\AssertException::class, "Intended error: FORM ERROR");
+		}, \Tester\AssertException::class, 'Intended error: FORM ERROR');
 
 		Assert::exception(function () {
 			$this->checkForm('Presenter:default', 'form1', [
@@ -226,7 +225,7 @@ class TPresenterTest extends \Testbench\CustomPresenterTestCase
 	{
 		$this->checkForm('Presenter:default', 'form3', [
 				'test' => 'test',
-						], FALSE); //do not check redirect
+						], false); //do not check redirect
 	}
 
 
@@ -267,7 +266,6 @@ class TPresenterTest extends \Testbench\CustomPresenterTestCase
 		$this->checkSignal('Presenter:default', 'signal');
 	}
 
-*/
 
 	public function testAjaxSignal()
 	{
@@ -283,14 +281,13 @@ class TPresenterTest extends \Testbench\CustomPresenterTestCase
 		Assert::same(['ok'], $response->getPayload());
 	}
 
-	/*
 
 	public function testFormEnhanced1()
 	{
 		$this->checkForm('Presenter:default', 'form1', [
 				'a' => 'b',
 				'test' => [
-						\Nette\Forms\Form::REQUIRED => TRUE,
+						\Nette\Forms\Form::REQUIRED => true,
 						'value',
 				],
 						], '/x/y');
@@ -308,7 +305,7 @@ class TPresenterTest extends \Testbench\CustomPresenterTestCase
 					'a' => 'b',
 					'test' => [
 							'value',
-							\Nette\Forms\Form::REQUIRED => TRUE,
+							\Nette\Forms\Form::REQUIRED => true,
 					],
 							], '/x/y');
 		}, \Tester\AssertException::class, "field 'test' should be defined as required, but it's not");
@@ -323,8 +320,6 @@ class TPresenterTest extends \Testbench\CustomPresenterTestCase
 		$this->logOut();
 		Assert::false($this->isUserLoggedIn());
 	}
-
-	*/
 }
 
 (new TPresenterTest)->run();

@@ -162,7 +162,7 @@ class Runner extends \Tester\TestCase
 								'-w', 'folder/',
 								'-j', '20',
 								'--temp', $this->tempDir . '/_temp2',
-								'path/to/tests'
+								'path/to/tests',
 										], $this->tempDir));
 	}
 }

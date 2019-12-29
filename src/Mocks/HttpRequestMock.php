@@ -11,8 +11,8 @@ class HttpRequestMock extends \Nette\Http\Request
 
 
 	public function __construct(
-					Http\UrlScript $url = NULL,
-					$query = NULL,
+					Http\UrlScript $url = null,
+					$query = null,
 					$post = [],
 					$files = [],
 					$cookies = [],
@@ -20,12 +20,12 @@ class HttpRequestMock extends \Nette\Http\Request
 					$method = PHP_SAPI,
 					$remoteAddress = '127.0.0.1',
 					$remoteHost = '127.0.0.1',
-					$rawBodyCallback = NULL
+					$rawBodyCallback = null
 	)
 	{
 		$url = $this->prepareUrl($url, $query);
 		$params = [
-				$url, NULL, $post, $files, $cookies, $headers, $method, $remoteAddress, $remoteHost, $rawBodyCallback,
+				$url, null, $post, $files, $cookies, $headers, $method, $remoteAddress, $remoteHost, $rawBodyCallback,
 		];
 		$this->checkParams($params);
 		parent::__construct(
@@ -37,10 +37,10 @@ class HttpRequestMock extends \Nette\Http\Request
 	private function prepareUrl(Http\UrlScript $url, ?array $query): Http\UrlScript
 	{
 		$url = $url ?: new Http\UrlScript('http://test.bench/');
-		if ($query !== NULL) {
+		if ($query !== null) {
 			$query = http_build_query($query);
 			$address = $url->absoluteUrl;
-			if ($url->query !== "") {
+			if ($url->query !== '') {
 				$address = str_replace($url->query, $query, $address);
 			} else {
 				$address .= "?$query";
@@ -53,7 +53,7 @@ class HttpRequestMock extends \Nette\Http\Request
 
 	private function checkParams(array &$params): void
 	{
-		$reflection = new \ReflectionMethod(parent::class, "__construct");
+		$reflection = new \ReflectionMethod(parent::class, '__construct');
 		if (count($params) > $reflection->getNumberOfParameters()) {
 			unset($params[1]);
 		}

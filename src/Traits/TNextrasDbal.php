@@ -10,7 +10,7 @@ trait TNextrasDbal
 
 	protected function getConnection()
 	{
-		$container = \Testbench\ContainerFactory::create(FALSE);
+		$container = \Testbench\ContainerFactory::create(false);
 		/** @var Mocks\NextrasDbalConnectionMock $connection */
 		$connection = $container->getByType('Nextras\Dbal\Connection');
 		if (!$connection instanceof Mocks\NextrasDbalConnectionMock) {

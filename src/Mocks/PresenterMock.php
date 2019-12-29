@@ -16,14 +16,14 @@ class PresenterMock extends \Nette\Application\UI\Presenter
 
 	public function run(\Nette\Application\Request $request): \Nette\Application\IResponse
 	{
-		$this->autoCanonicalize = FALSE;
+		$this->autoCanonicalize = false;
 		return parent::run($request);
 	}
 
 
 	public function startup(): void
 	{
-		if ($this->getParameter('__terminate') === TRUE) {
+		if ($this->getParameter('__terminate') === true) {
 			$this->terminate();
 		}
 		parent::startup();
@@ -40,7 +40,7 @@ class PresenterMock extends \Nette\Application\UI\Presenter
 
 	public function isAjax(): bool
 	{
-		return FALSE;
+		return false;
 	}
 
 

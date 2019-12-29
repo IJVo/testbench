@@ -8,9 +8,7 @@ namespace Tests\Traits;
 use Nextras\Dbal\Drivers\Mysqli\MysqliDriver;
 use Tester\Assert;
 
-require __DIR__ . '/../bootstrap.php';
-
-//require getenv('BOOTSTRAP');
+require getenv('BOOTSTRAP');
 
 /**
  * @testCase
@@ -29,7 +27,7 @@ class TNextrasDbalTest extends \Tester\TestCase
 		$db->onConnect[] = function () {
 			Assert::fail('\Nextras\Dbal\Connection::$onConnect event should not be called if you do NOT need database');
 		};
-		\Tester\Environment::$checkAssertions = FALSE;
+		\Tester\Environment::$checkAssertions = false;
 	}
 
 
@@ -79,8 +77,6 @@ class TNextrasDbalTest extends \Tester\TestCase
 			Assert::same('_testbench_' . getenv(\Tester\Environment::THREAD), $returnActualDatabaseName());
 		}
 	}
-
-
 //	public function testDatabaseConnectionReplacementInApp()
 //	{
 //		/** @var \Nette\Database\Context $context */
@@ -88,8 +84,6 @@ class TNextrasDbalTest extends \Tester\TestCase
 //		new \NdbComponentWithDatabaseAccess($context); //tests inside
 //		//app is not using onConnect from Testbench but it has to connect to the mock database
 //	}
-
-
 //	public function testConnectionMockSetup()
 //	{
 //		/** @var \Testbench\Mocks\NextrasDbalConnectionMock $connection */

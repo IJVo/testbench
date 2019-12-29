@@ -12,16 +12,16 @@ Testbench\Bootstrap::setup(__DIR__ . '/_temp', function (Nette\Configurator $con
 	]);
 	$configurator->setTempDirectory(__DIR__ . '/_temp');
 
-	# bootstrap.php pro testy
+	// bootstrap.php pro testy
 	if (getenv(\Tester\Environment::RUNNER)) {
-		# Running by Tester (e.g. vendor/bin/tester tests/MyTest.phpt)
-		$configurator->setDebugMode(FALSE);
+		// Running by Tester (e.g. vendor/bin/tester tests/MyTest.phpt)
+		$configurator->setDebugMode(false);
 	} elseif (PHP_SAPI === 'cli') {
-		# Running as ordinary CLI script (e.g. php tests/MyTest.phpt)
-		$configurator->setDebugMode(FALSE);
+		// Running as ordinary CLI script (e.g. php tests/MyTest.phpt)
+		$configurator->setDebugMode(false);
 	} else {
-		# Browser
-		$configurator->setDebugMode(TRUE);
+		// Browser
+		$configurator->setDebugMode(true);
 		$configurator->enableDebugger();
 	}
 

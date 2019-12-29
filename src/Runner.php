@@ -14,11 +14,11 @@ class Runner
 		$parameters = [];
 
 		//Resolve tests dir from command line input
-		$pathToTests = NULL;
+		$pathToTests = null;
 		$environmentVariables = [];
 		foreach ($args as $arg) {
-			if (in_array($arg, ['-C', '-s', '--stop-on-fail', '-i', '--info', '-h', '--help'])) { //singles
-				$parameters[$arg] = TRUE;
+			if (in_array($arg, ['-C', '-s', '--stop-on-fail', '-i', '--info', '-h', '--help'], true)) { //singles
+				$parameters[$arg] = true;
 				continue;
 			}
 			if (preg_match('~^-[a-z0-9_/-]+~i', $arg)) { //remember option with value
@@ -51,7 +51,7 @@ class Runner
 
 		//Show information about skipped tests
 		if (!array_key_exists('-s', $parameters)) {
-			$parameters['-s'] = TRUE;
+			$parameters['-s'] = true;
 		}
 
 		//Look for php.ini file
@@ -61,7 +61,7 @@ class Runner
 			if (is_file($iniFile)) {
 				$parameters['-c'] = $iniFile;
 			} else {
-				$parameters['-C'] = TRUE;
+				$parameters['-C'] = true;
 			}
 		}
 
@@ -92,13 +92,13 @@ class Runner
 			unset($parameters['--bootstrap']);
 		}
 
-		if ($pathToTests === NULL) {
+		if ($pathToTests === null) {
 			$pathToTests = $testsDir;
 		}
 
 		$args = $environmentVariables;
 		foreach ($parameters as $key => $value) { //return to the Tester format
-			if ($value === TRUE) { //singles
+			if ($value === true) { //singles
 				$args[] = $key;
 				continue;
 			}

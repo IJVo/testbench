@@ -1,13 +1,12 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace Tests\Traits;
 
 use Tester\Assert;
 
-require __DIR__ . '/../bootstrap.php';
-
-//require getenv('BOOTSTRAP');
+require getenv('BOOTSTRAP');
 
 /**
  * @testCase
@@ -17,16 +16,19 @@ class TCompiledContainerTest extends \Tester\TestCase
 
 	use \Testbench\TCompiledContainer;
 
+
 	public function testGetContainer()
 	{
 		Assert::type(\Nette\DI\Container::class, $container = $this->getContainer());
 		Assert::same($container, $this->getContainer());
 	}
 
+
 	public function testGetService()
 	{
 		Assert::type(\Nette\Application\Application::class, $this->getService(\Nette\Application\Application::class));
 	}
+
 
 	public function testRefreshContainer()
 	{
@@ -37,6 +39,7 @@ class TCompiledContainerTest extends \Tester\TestCase
 		Assert::notSame($container, $refreshedContainer);
 	}
 
+
 	public function testRefreshContainerWithConfig()
 	{
 		$container = $this->getContainer();
@@ -45,9 +48,9 @@ class TCompiledContainerTest extends \Tester\TestCase
 		}, 'E_NOTICE', 'Undefined index: test');
 
 		$refreshedContainer = $this->refreshContainer([
-			'extensions' => ['test' => \Testbench\FakeExtension::class],
-			'services' => ['test' => 'Testbench\FakeExtension'],
-			'test' => ['xxx' => ['yyy']],
+				'extensions' => ['test' => \Testbench\FakeExtension::class],
+				'services' => ['test' => 'Testbench\FakeExtension'],
+				'test' => ['xxx' => ['yyy']],
 		]);
 		Assert::same(['xxx' => ['yyy']], $refreshedContainer->parameters['test']);
 		Assert::type(\Testbench\FakeExtension::class, $extension = $refreshedContainer->getService('test'));
@@ -56,24 +59,24 @@ class TCompiledContainerTest extends \Tester\TestCase
 		Assert::notSame($container, $refreshedContainer);
 	}
 
+
 	public function testRunLevels()
 	{
 		putenv('RUNLEVEL=0');
-		Assert::same(0, (int)getenv('RUNLEVEL'));
+		Assert::same(0, (int) getenv('RUNLEVEL'));
 		putenv('RUNLEVEL=5'); //do not skip
 		$this->markTestAsSlow();
-		Assert::same(\Testbench::FINE, (int)getenv('RUNLEVEL'));
+		Assert::same(\Testbench::FINE, (int) getenv('RUNLEVEL'));
 		putenv('RUNLEVEL=10');
 		$this->markTestAsVerySlow();
-		Assert::same(\Testbench::SLOW, (int)getenv('RUNLEVEL'));
+		Assert::same(\Testbench::SLOW, (int) getenv('RUNLEVEL'));
 		putenv('RUNLEVEL=7');
 		$this->changeRunLevel(7);
-		Assert::same(7, (int)getenv('RUNLEVEL'));
+		Assert::same(7, (int) getenv('RUNLEVEL'));
 		putenv('RUNLEVEL=0');
-		$this->markTestAsSlow(FALSE);
-		Assert::same(0, (int)getenv('RUNLEVEL'));
+		$this->markTestAsSlow(false);
+		Assert::same(0, (int) getenv('RUNLEVEL'));
 	}
-
 }
 
 (new TCompiledContainerTest)->run();

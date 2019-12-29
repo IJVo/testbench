@@ -13,29 +13,29 @@ use Nette\Database\Drivers\PgSqlDriver;
 class NetteDatabaseConnectionMock extends \Nette\Database\Connection implements \Testbench\Providers\IDatabaseProvider
 {
 
-	private $__testbench_database_name;
+	private $__testbenchDatabaseName;
 
 
-	public function __construct($dsn, $user = NULL, $password = NULL, array $options = NULL)
+	public function __construct($dsn, $user = null, $password = null, array $options = null)
 	{
-		$container = \Testbench\ContainerFactory::create(FALSE);
-		$this->onConnect[] = function (NetteDatabaseConnectionMock $connection) use ($container) {
-			if ($this->__testbench_database_name !== NULL) { //already initialized (needed for pgsql)
+		$container = \Testbench\ContainerFactory::create(false);
+		$this->onConnect[] = function (self $connection) use ($container) {
+			if ($this->__testbenchDatabaseName !== null) { //already initialized (needed for pgsql)
 				return;
 			}
 			try {
 				$config = $container->parameters['testbench'];
-				if ($config['shareDatabase'] === TRUE) {
+				if ($config['shareDatabase'] === true) {
 					$registry = new \Testbench\DatabasesRegistry;
 					$dbName = $container->parameters['testbench']['dbprefix'] . getenv(\Tester\Environment::THREAD);
 					if ($registry->registerDatabase($dbName)) {
-						$this->__testbench_database_setup($connection, $container, TRUE);
+						$this->__testbenchDatabaseSetup($connection, $container, true);
 					} else {
-						$this->__testbench_database_name = $dbName;
-						$this->__testbench_database_change($connection, $container);
+						$this->__testbenchDatabaseName = $dbName;
+						$this->__testbenchDatabaseChange($connection, $container);
 					}
 				} else { // always create new test database
-					$this->__testbench_database_setup($connection, $container);
+					$this->__testbenchDatabaseSetup($connection, $container);
 				}
 			} catch (\Exception $e) {
 				\Tester\Assert::fail($e->getMessage());
@@ -46,21 +46,21 @@ class NetteDatabaseConnectionMock extends \Nette\Database\Connection implements 
 
 
 	/** @internal */
-	public function __testbench_database_setup($connection, \Nette\DI\Container $container, $persistent = FALSE)
+	public function __testbenchDatabaseSetup($connection, \Nette\DI\Container $container, $persistent = false)
 	{
 		$config = $container->parameters['testbench'];
-		$this->__testbench_database_name = $config['dbprefix'] . getenv(\Tester\Environment::THREAD);
+		$this->__testbenchDatabaseName = $config['dbprefix'] . getenv(\Tester\Environment::THREAD);
 
-		$this->__testbench_database_drop($connection, $container);
-		$this->__testbench_database_create($connection, $container);
+		$this->__testbenchDatabaseDrop($connection, $container);
+		$this->__testbenchDatabaseCreate($connection, $container);
 
 		foreach ($config['sqls'] as $file) {
 			\Nette\Database\Helpers::loadFromFile($connection, $file);
 		}
 
-		if ($persistent === FALSE) {
+		if ($persistent === false) {
 			register_shutdown_function(function () use ($connection, $container) {
-				$this->__testbench_database_drop($connection, $container);
+				$this->__testbenchDatabaseDrop($connection, $container);
 			});
 		}
 	}
@@ -71,10 +71,10 @@ class NetteDatabaseConnectionMock extends \Nette\Database\Connection implements 
 	 *
 	 * @param $connection \Nette\Database\Connection
 	 */
-	public function __testbench_database_create($connection, \Nette\DI\Container $container)
+	public function __testbenchDatabaseCreate($connection, \Nette\DI\Container $container)
 	{
-		$connection->query("CREATE DATABASE {$this->__testbench_database_name}");
-		$this->__testbench_database_change($connection, $container);
+		$connection->query("CREATE DATABASE {$this->__testbenchDatabaseName}");
+		$this->__testbenchDatabaseChange($connection, $container);
 	}
 
 
@@ -83,12 +83,12 @@ class NetteDatabaseConnectionMock extends \Nette\Database\Connection implements 
 	 *
 	 * @param $connection \Nette\Database\Connection
 	 */
-	public function __testbench_database_change($connection, \Nette\DI\Container $container)
+	public function __testbenchDatabaseChange($connection, \Nette\DI\Container $container)
 	{
 		if ($connection->getSupplementalDriver() instanceof MySqlDriver) {
-			$connection->query("USE {$this->__testbench_database_name}");
+			$connection->query("USE {$this->__testbenchDatabaseName}");
 		} else {
-			$this->__testbench_database_connect($connection, $container, $this->__testbench_database_name);
+			$this->__testbenchDatabaseConnect($connection, $container, $this->__testbenchDatabaseName);
 		}
 	}
 
@@ -98,12 +98,12 @@ class NetteDatabaseConnectionMock extends \Nette\Database\Connection implements 
 	 *
 	 * @param $connection \Nette\Database\Connection
 	 */
-	public function __testbench_database_drop($connection, \Nette\DI\Container $container)
+	public function __testbenchDatabaseDrop($connection, \Nette\DI\Container $container)
 	{
 		if (!$connection->getSupplementalDriver() instanceof MySqlDriver) {
-			$this->__testbench_database_connect($connection, $container);
+			$this->__testbenchDatabaseConnect($connection, $container);
 		}
-		$connection->query("DROP DATABASE IF EXISTS {$this->__testbench_database_name}");
+		$connection->query("DROP DATABASE IF EXISTS {$this->__testbenchDatabaseName}");
 	}
 
 
@@ -112,10 +112,10 @@ class NetteDatabaseConnectionMock extends \Nette\Database\Connection implements 
 	 *
 	 * @param $connection \Nette\Database\Connection
 	 */
-	public function __testbench_database_connect($connection, \Nette\DI\Container $container, $databaseName = NULL)
+	public function __testbenchDatabaseConnect($connection, \Nette\DI\Container $container, $databaseName = null)
 	{
 		//connect to an existing database other than $this->_databaseName
-		if ($databaseName === NULL) {
+		if ($databaseName === null) {
 			$dbname = $container->parameters['testbench']['dbname'];
 			if ($dbname) {
 				$databaseName = $dbname;
@@ -130,11 +130,11 @@ class NetteDatabaseConnectionMock extends \Nette\Database\Connection implements 
 
 		$dbr = (new \Nette\Reflection\ClassType($connection))->getParentClass(); //:-(
 		$params = $dbr->getProperty('params');
-		$params->setAccessible(TRUE);
+		$params->setAccessible(true);
 		$params = $params->getValue($connection);
 
 		$options = $dbr->getProperty('options');
-		$options->setAccessible(TRUE);
+		$options->setAccessible(true);
 		$options = $options->getValue($connection);
 
 		$connection->disconnect();

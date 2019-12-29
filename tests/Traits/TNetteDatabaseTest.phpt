@@ -1,14 +1,13 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace Tests\Traits;
 
 use Nette\Database\Drivers\MySqlDriver;
 use Tester\Assert;
 
-require __DIR__ . '/../bootstrap.php';
-
-//require getenv('BOOTSTRAP');
+require getenv('BOOTSTRAP');
 
 /**
  * @testCase
@@ -19,6 +18,7 @@ class TNetteDatabaseTest extends \Tester\TestCase
 	use \Testbench\TCompiledContainer;
 	use \Testbench\TNetteDatabase;
 
+
 	public function testLazyConnection()
 	{
 		$container = $this->getContainer();
@@ -26,13 +26,15 @@ class TNetteDatabaseTest extends \Tester\TestCase
 		$db->onConnect[] = function () {
 			Assert::fail('\Nette\Database\Connection::$onConnect event should not be called if you do NOT need database');
 		};
-		\Tester\Environment::$checkAssertions = FALSE;
+		\Tester\Environment::$checkAssertions = false;
 	}
+
 
 	public function testContext()
 	{
 		Assert::type(\Nette\Database\Context::class, $this->getContext());
 	}
+
 
 	public function testDatabaseCreation()
 	{
@@ -50,6 +52,7 @@ class TNetteDatabaseTest extends \Tester\TestCase
 		}
 	}
 
+
 	public function testDatabaseSqls()
 	{
 		/** @var \Nette\Database\Connection $connection */
@@ -58,10 +61,10 @@ class TNetteDatabaseTest extends \Tester\TestCase
 		preg_match('~.*dbname=([a-z0-9_-]+)~i', $connection->getDsn(), $matches);
 
 		Assert::same([
-			1 => ['id' => 1, 'column_1' => 'value_1', 'column_2' => 'value_2'],
-			['id' => 2, 'column_1' => 'value_1', 'column_2' => 'value_2'],
-			['id' => 3, 'column_1' => 'value_1', 'column_2' => 'value_2'],
-		], $result);
+				1 => ['id' => 1, 'column_1' => 'value_1', 'column_2' => 'value_2'],
+				['id' => 2, 'column_1' => 'value_1', 'column_2' => 'value_2'],
+				['id' => 3, 'column_1' => 'value_1', 'column_2' => 'value_2'],
+						], $result);
 
 		if ($connection->getSupplementalDriver() instanceof MySqlDriver) {
 			Assert::match('information_schema', $matches[1]);
@@ -69,6 +72,7 @@ class TNetteDatabaseTest extends \Tester\TestCase
 			Assert::same('_testbench_' . getenv(\Tester\Environment::THREAD), $matches[1]);
 		}
 	}
+
 
 	public function testDatabaseConnectionReplacementInApp()
 	{
@@ -78,6 +82,7 @@ class TNetteDatabaseTest extends \Tester\TestCase
 		//app is not using onConnect from Testbench but it has to connect to the mock database
 	}
 
+
 	public function testConnectionMockSetup()
 	{
 		/** @var \Testbench\Mocks\NetteDatabaseConnectionMock $connection */
@@ -85,11 +90,11 @@ class TNetteDatabaseTest extends \Tester\TestCase
 
 		$dbr = (new \Nette\Reflection\ClassType($connection))->getParentClass(); //:-(
 		$params = $dbr->getProperty('params');
-		$params->setAccessible(TRUE);
+		$params->setAccessible(true);
 		$params = $params->getValue($connection);
 
 		$options = $dbr->getProperty('options');
-		$options->setAccessible(TRUE);
+		$options->setAccessible(true);
 		$options = $options->getValue($connection);
 
 		Assert::count(3, $params);
@@ -101,11 +106,10 @@ class TNetteDatabaseTest extends \Tester\TestCase
 
 		Assert::same([
 //			'PDO::MYSQL_ATTR_COMPRESS' => TRUE,
-			'1003' => TRUE,
-			'lazy' => TRUE,
-		], $options);
+				'1003' => true,
+				'lazy' => true,
+						], $options);
 	}
-
 }
 
 (new TNetteDatabaseTest)->run();
