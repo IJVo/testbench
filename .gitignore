@@ -5,6 +5,10 @@ vendor/*
 !vendor/others
 www/components
 
+!/log2
+/log2/*
+!/log2/.gitkeep
+
 .DS_Store
 .idea
 nbproject
