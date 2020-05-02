@@ -12,7 +12,7 @@ class IJVoLog
 {
 
 	/** @var string */
-	public static $directory = __DIR__ . '/../tests/log';
+	public static $directory = __DIR__ . '/../log';
 
 	/** @var string */
 	public static $fileLog = 'IJVo_log_test';
