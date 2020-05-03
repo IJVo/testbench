@@ -258,17 +258,17 @@ IJVoLog::log('TPresenter.php - checkAjaxSignal() -9 End $response', $response);
 		IJVoLog::log('TPresenter.php - checkRedirect() - $this->__testbench_exception', $this->__testbench_exception);
 
 		if (!($this->__testbench_exception)) {
-			Assert::same(200, $this->getReturnCode());
-			Assert::type('Nette\Application\Responses\RedirectResponse', $response);
-			Assert::same(302, $response->getCode());
-
 //			Assert::same(200, $this->getReturnCode());
-//			if ($isRedir == TRUE) {
-//				Assert::type(\Nette\Application\Responses\RedirectResponse::class, $response);
-//				Assert::same(302, $response->getCode());
-//			} else {
-//				Assert::type(\Nette\Application\Responses\TextResponse::class, $response);
-//			}
+//			Assert::type('Nette\Application\Responses\RedirectResponse', $response);
+//			Assert::same(302, $response->getCode());
+
+			Assert::same(200, $this->getReturnCode());
+			if ($isRedir == TRUE) {
+				Assert::type(\Nette\Application\Responses\RedirectResponse::class, $response);
+				Assert::same(302, $response->getCode());
+			} else {
+				Assert::type(\Nette\Application\Responses\TextResponse::class, $response);
+			}
 
 			if ($path) {
 				if (!Assert::isMatching("~^https?://test\.bench{$path}(?(?=\?).+)$~", $response->getUrl())) {
