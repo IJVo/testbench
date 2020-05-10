@@ -47,10 +47,7 @@
 	"prefer-stable": true,
 	"autoload": {
 		"psr-4": {
-			"Testbench\\": [
-				"src/",
-				"src/Traits/"
-			]
+			"Testbench\\": "src/"
 		},
 		"files": [
 			"src/Testbench.php"
