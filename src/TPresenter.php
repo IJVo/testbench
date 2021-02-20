@@ -26,7 +26,7 @@ trait TPresenter
 	 */
 	protected function check(string $destination, array $params = [], array $post = []): \Nette\Application\IResponse
 	{
-IJVoLog::log('TPresenter.php - check() -1 $this->__testbench_exception', $this->__testbench_exception);
+		IJVoLog::log('TPresenter.php - check() -1 $this->__testbench_exception', $this->__testbench_exception);
 
 		$destination = ltrim($destination, ':');
 		$pos = strrpos($destination, ':');
@@ -37,11 +37,11 @@ IJVoLog::log('TPresenter.php - check() -1 $this->__testbench_exception', $this->
 		$container->removeService('httpRequest');
 		$headers = $this->__testbench_ajaxMode ? ['X-Requested-With' => 'XMLHttpRequest'] : [];
 		$url = new \Nette\Http\UrlScript($container->parameters['testbench']['url']);
-	IJVoLog::log('TPresenter.php - Check() - $url', $url);
-	IJVoLog::log('TPresenter.php - Check() - $params', $params);
+		IJVoLog::log('TPresenter.php - Check() - $url', $url);
+		IJVoLog::log('TPresenter.php - Check() - $params', $params);
 
 		$container->addService('httpRequest', new Mocks\HttpRequestMock($url, $params, $post, [], [], $headers));
-	IJVoLog::log('TPresenter.php - Check() - $container', $container);
+		IJVoLog::log('TPresenter.php - Check() - $container', $container);
 
 		$presenterFactory = $container->getByType(\Nette\Application\IPresenterFactory::class);
 		$this->__testbench_presenter = $presenterFactory->createPresenter($presenter);
@@ -50,12 +50,12 @@ IJVoLog::log('TPresenter.php - check() -1 $this->__testbench_exception', $this->
 
 		$postCopy = $post;
 
-	IJVoLog::log('TPresenter.php - Check() - $post', $post);
+		IJVoLog::log('TPresenter.php - Check() - $post', $post);
 
 		if (isset($params['do'])) {
 			foreach ($post as $key => $field) {
-	IJVoLog::log('TPresenter.php - Check() - $post -key', $key);
-	IJVoLog::log('TPresenter.php - Check() - $post -field', $field);
+				IJVoLog::log('TPresenter.php - Check() - $post -key', $key);
+				IJVoLog::log('TPresenter.php - Check() - $post -field', $field);
 
 				if (is_array($field) && array_key_exists(\Nette\Forms\Form::REQUIRED, $field)) {
 					$post[$key] = $field[0];
@@ -70,10 +70,10 @@ IJVoLog::log('TPresenter.php - check() -1 $this->__testbench_exception', $this->
 		$post = $post + ['_token_' => 'goVdCQ1jk0UQuVArz15RzkW6vpDU9YqTRILjE=']; //CSRF magic! ¯\_(ツ)_/¯
 
 		$request = new \Nette\Application\Request(
-						$presenter,
-						$post ? 'POST' : 'GET',
-						['action' => $action] + $params,
-						$post
+			$presenter,
+			$post ? 'POST' : 'GET',
+			['action' => $action] + $params,
+			$post
 		);
 
 		IJVoLog::log('TPresenter.php - Check() - $destination', $destination);
@@ -94,27 +94,27 @@ IJVoLog::log('TPresenter.php - check() -1 $this->__testbench_exception', $this->
 			if (isset($params['do'])) {
 				if (preg_match('~(.+)-submit$~', $params['do'], $matches)) {
 
-			IJVoLog::log('TPresenter.php - Check() - preg_match $matches', $matches);
+					IJVoLog::log('TPresenter.php - Check() - preg_match $matches', $matches);
 
 					/** @var \Nette\Application\UI\Form $form */
 					$form = $this->__testbench_presenter->getComponent($matches[1]);
 
-	IJVoLog::log('TPresenter.php - Check() - $form', $form);
+					IJVoLog::log('TPresenter.php - Check() - $form', $form);
 
 					foreach ($form->getControls() as $control) {
 
-	IJVoLog::log('TPresenter.php - Check() - $control', $control);
+						IJVoLog::log('TPresenter.php - Check() - $control', $control);
 
 						if (array_key_exists($control->getName(), $postCopy)) {
 
-	IJVoLog::log('TPresenter.php - Check() - $postCopy', $postCopy);
+							IJVoLog::log('TPresenter.php - Check() - $postCopy', $postCopy);
 
 							$subvalues = $postCopy[$control->getName()];
 
-	IJVoLog::log('TPresenter.php - Check() - $subvalues', $subvalues);
+							IJVoLog::log('TPresenter.php - Check() - $subvalues', $subvalues);
 
 							$rq = \Nette\Forms\Form::REQUIRED;
-	IJVoLog::log('TPresenter.php - Check() - $rq', $rq);
+							IJVoLog::log('TPresenter.php - Check() - $rq', $rq);
 
 							if (is_array($subvalues) && array_key_exists($rq, $subvalues) && $subvalues[$rq]) {
 								if ($control->isRequired() !== true) {
@@ -124,7 +124,7 @@ IJVoLog::log('TPresenter.php - check() -1 $this->__testbench_exception', $this->
 						}
 						if ($control->hasErrors()) {
 							$errors = '';
-	IJVoLog::log('TPresenter.php - Check() - $control->hasErrors()', $control->hasErrors());
+							IJVoLog::log('TPresenter.php - Check() - $control->hasErrors()', $control->hasErrors());
 							$counter = 1;
 							foreach ($control->getErrors() as $error) {
 								$errors .= "  - $error\n";
@@ -135,16 +135,16 @@ IJVoLog::log('TPresenter.php - check() -1 $this->__testbench_exception', $this->
 					}
 					foreach ($form->getErrors() as $error) {
 
-	IJVoLog::log('TPresenter.php - Check() - $error', $error);
+						IJVoLog::log('TPresenter.php - Check() - $error', $error);
 
-			Assert::fail($error);
+						Assert::fail($error);
 					}
 				}
 			}
 
 			IJVoLog::log('TPresenter.php - Check() End - $response', $response);
 
-			$IsOk = true;  // hack for Nette tester
+			$IsOk = true; // hack for Nette tester
 			Assert::true($IsOk);
 
 			return $response;
@@ -198,8 +198,8 @@ IJVoLog::log('TPresenter.php - check() -1 $this->__testbench_exception', $this->
 	protected function checkSignal(string $destination, string $signal, array $params = [], array $post = [], $isRedir = true): \Nette\Application\IResponse
 	{
 		return $this->checkRedirect($destination, false, [
-								'do' => $signal,
-										] + $params, $post, $isRedir);
+				'do' => $signal,
+				] + $params, $post, $isRedir);
 	}
 
 
@@ -212,25 +212,25 @@ IJVoLog::log('TPresenter.php - check() -1 $this->__testbench_exception', $this->
 	 */
 	protected function checkAjaxSignal(string $destination, string $signal, array $params = [], array $post = []): \Nette\Application\Responses\JsonResponse
 	{
-IJVoLog::log('TPresenter.php - checkAjaxSignal() -1A Start $destination', $destination);
-IJVoLog::log('TPresenter.php - checkAjaxSignal() -1B Start $signal', $signal);
+		IJVoLog::log('TPresenter.php - checkAjaxSignal() -1A Start $destination', $destination);
+		IJVoLog::log('TPresenter.php - checkAjaxSignal() -1B Start $signal', $signal);
 
 		$this->__testbench_ajaxMode = true;
 		$response = $this->check($destination, [
-				'do' => $signal,
-						] + $params, $post);
-IJVoLog::log('TPresenter.php - checkAjaxSignal() -2 $response', $response);
+			'do' => $signal,
+			] + $params, $post);
+		IJVoLog::log('TPresenter.php - checkAjaxSignal() -2 $response', $response);
 
 		Assert::true($this->__testbench_presenter->isAjax());
 
-IJVoLog::log('TPresenter.php - checkAjaxSignal() -3 $this->__testbench_exception', $this->__testbench_exception);
+		IJVoLog::log('TPresenter.php - checkAjaxSignal() -3 $this->__testbench_exception', $this->__testbench_exception);
 
 		if (!$this->__testbench_exception) {
 			Assert::same(200, $this->getReturnCode());
 			Assert::type(\Nette\Application\Responses\JsonResponse::class, $response);
 		}
 		$this->__testbench_ajaxMode = false;
-IJVoLog::log('TPresenter.php - checkAjaxSignal() -9 End $response', $response);
+		IJVoLog::log('TPresenter.php - checkAjaxSignal() -9 End $response', $response);
 
 		return $response;
 	}
@@ -276,13 +276,13 @@ IJVoLog::log('TPresenter.php - checkAjaxSignal() -9 End $response', $response);
 					$url = Dumper::color('yellow') . Dumper::toLine($response->getUrl()) . Dumper::color('white');
 					$originalUrl = new \Nette\Http\Url($response->getUrl());
 
-	IJVoLog::log('TPresenter.php - checkRedirect() -isMatching - $path', $path);
-	IJVoLog::log('TPresenter.php - checkRedirect() -isMatching - $url', $url);
-	IJVoLog::log('TPresenter.php - checkRedirect() -isMatching - $originalUrl', $originalUrl);
+					IJVoLog::log('TPresenter.php - checkRedirect() -isMatching - $path', $path);
+					IJVoLog::log('TPresenter.php - checkRedirect() -isMatching - $url', $url);
+					IJVoLog::log('TPresenter.php - checkRedirect() -isMatching - $originalUrl', $originalUrl);
 
 					Assert::fail(
-									str_repeat(' ', strlen($originalUrl->getHostUrl()) - 13) // strlen('Failed: path ') = 13
-									. "path $path doesn't match\n$url\nafter redirect"
+						str_repeat(' ', strlen($originalUrl->getHostUrl()) - 13) // strlen('Failed: path ') = 13
+						. "path $path doesn't match\n$url\nafter redirect"
 					);
 				}
 			}
@@ -326,6 +326,25 @@ IJVoLog::log('TPresenter.php - checkAjaxSignal() -9 End $response', $response);
 
 	/**
 	 * @param string $destination fully qualified presenter name (module:module:presenter)
+	 * @param array $params provided to the presenter usually via URL
+	 * @param array $post provided to the presenter via POST
+	 *
+	 * @throws \Exception
+	 */
+	protected function checkVoid(string $destination, array $params = [], array $post = []): \Nette\Application\Responses\VoidResponse
+	{
+		/** @var \Nette\Application\Responses\VoidResponse $response */
+		$response = $this->check($destination, $params, $post);
+		if (!$this->__testbench_exception) {
+			Assert::same(200, $this->getReturnCode());
+			Assert::type(\Nette\Application\Responses\VoidResponse::class, $response);
+		}
+		return $response;
+	}
+
+
+	/**
+	 * @param string $destination fully qualified presenter name (module:module:presenter)
 	 * @param string $formName
 	 * @param array $post provided to the presenter via POST
 	 * @param string|bool $path Path after redirect or FALSE if it's form without redirect
@@ -334,7 +353,7 @@ IJVoLog::log('TPresenter.php - checkAjaxSignal() -9 End $response', $response);
 	 */
 	protected function checkForm(string $destination, string $formName, array $post = [], $path = '/'): \Nette\Application\IResponse
 	{
-			IJVoLog::log('TPresenter.php - checkForm() - $path', $path);
+		IJVoLog::log('TPresenter.php - checkForm() - $path', $path);
 		if (is_string($path)) {
 
 //			return $this->checkRedirect($destination, $path, [
@@ -342,17 +361,16 @@ IJVoLog::log('TPresenter.php - checkAjaxSignal() -9 End $response', $response);
 //											], $post);
 
 			$chckRedir = $this->checkRedirect($destination, $path, [
-									'do' => $formName . '-submit',
-											], $post);
+				'do' => $formName . '-submit',
+				], $post);
 			IJVoLog::log('TPresenter.php - checkForm() - $chckRedir', $chckRedir);
 
 			return $chckRedir;
-
 		} elseif (is_bool($path)) {
 			/** @var \Nette\Application\Responses\RedirectResponse $response */
 			$response = $this->check($destination, [
-					'do' => $formName . '-submit',
-							], $post);
+				'do' => $formName . '-submit',
+				], $post);
 			if (!$this->__testbench_exception) {
 				Assert::same(200, $this->getReturnCode());
 				Assert::type(\Nette\Application\Responses\TextResponse::class, $response);
@@ -381,8 +399,8 @@ IJVoLog::log('TPresenter.php - checkAjaxSignal() -9 End $response', $response);
 		$this->__testbench_presenter = null; //FIXME: not very nice, but performance first
 		$this->__testbench_ajaxMode = true;
 		$response = $this->check($destination, [
-				'do' => $formName . '-submit',
-						], $post);
+			'do' => $formName . '-submit',
+			], $post);
 		Assert::true($this->__testbench_presenter->isAjax());
 		if (!$this->__testbench_exception) {
 			Assert::same(200, $this->getReturnCode());
@@ -454,10 +472,18 @@ IJVoLog::log('TPresenter.php - checkAjaxSignal() -9 End $response', $response);
 	 */
 	protected function logIn($id = 1, $roles = null, $data = null): \Nette\Security\User
 	{
-		if ($id instanceof \Nette\Security\IIdentity) {
-			$identity = $id;
+		if (class_exists(\App\Model\Entities\UserIdentity::class)) {
+			if ($id instanceof \App\Model\Entities\UserIdentity) {
+				$identity = $id;
+			} else {
+				$identity = new \App\Model\Entities\UserIdentity($id, $roles, $data);
+			}
 		} else {
-			$identity = new \Nette\Security\Identity($id, $roles, $data);
+			if ($id instanceof \Nette\Security\IIdentity) {
+				$identity = $id;
+			} else {
+				$identity = new \Nette\Security\Identity($id, $roles, $data);
+			}
 		}
 		/** @var \Nette\Security\User $user */
 		$user = ContainerFactory::create(false)->getByType(\Nette\Security\User::class);
