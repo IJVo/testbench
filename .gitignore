@@ -31,4 +31,4 @@ phpW.ini
 mysql.local.neon
 testuj.bat
 tests/tmp/*
-composer.lock
+PHP.bat
