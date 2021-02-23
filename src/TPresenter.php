@@ -31,7 +31,11 @@ trait TPresenter
 		$destination = ltrim($destination, ':');
 		$pos = strrpos($destination, ':');
 		$presenter = substr($destination, 0, $pos);
-		$action = substr($destination, $pos + 1) ?: 'default';
+		$posSlash = strrpos($destination, '/');
+		$action = substr($destination, $pos + 1, (($posSlash > 0) ? $posSlash-1 -$pos : 999)) ?: 'default';
+		if ($posSlash>0) {
+			$params['id'] = substr($destination, $posSlash+1);
+		}
 
 		$container = ContainerFactory::create(false);
 		$container->removeService('httpRequest');
