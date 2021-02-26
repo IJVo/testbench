@@ -32,9 +32,9 @@ trait TPresenter
 		$pos = strrpos($destination, ':');
 		$presenter = substr($destination, 0, $pos);
 		$posSlash = strrpos($destination, '/');
-		$action = substr($destination, $pos + 1, (($posSlash > 0) ? $posSlash-1 -$pos : 999)) ?: 'default';
-		if ($posSlash>0) {
-			$params['id'] = substr($destination, $posSlash+1);
+		$action = substr($destination, $pos + 1, (($posSlash > 0) ? $posSlash - 1 - $pos : 999)) ?: 'default';
+		if ($posSlash > 0) {
+			$params['id'] = substr($destination, $posSlash + 1);
 		}
 
 		$container = ContainerFactory::create(false);
@@ -480,7 +480,20 @@ trait TPresenter
 			if ($id instanceof \App\Model\Entities\UserIdentity) {
 				$identity = $id;
 			} else {
-				$identity = new \App\Model\Entities\UserIdentity($id, $roles, $data);
+				if (is_int($id) && $roles == null && $data == null) {
+					if (class_exists(\App\Model\Users::class)) {
+						/** @var \App\Model\Users $users */
+						$users = $this->getService(\App\Model\Users::class);
+						$user = $users->findOneBy(['id' => $id]);
+						$arr = $user->toArray();
+						unset($arr['password'], $arr['id'], $arr['role']);
+						$identity = new \App\Model\Entities\UserIdentity($user['id'], explode(';', $user['role']), $arr);
+					} else {
+						$identity = new \App\Model\Entities\UserIdentity($id, $roles, $data);
+					}
+				} else {
+					$identity = new \App\Model\Entities\UserIdentity($id, $roles, $data);
+				}
 			}
 		} else {
 			if ($id instanceof \Nette\Security\IIdentity) {
